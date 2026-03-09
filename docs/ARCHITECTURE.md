@@ -103,3 +103,58 @@ interface AppState {
 - **LocalStorage key:** `athletera:strength-state:v2`
 - **Formato:** JSON serializado
 - **Alcance:** Solo navegador del usuario (no se envía a servidor)
+
+---
+
+## Origen de los Ratios Ideales
+
+### ¿De dónde salen estos porcentajes?
+
+Los ratios ideales no son arbitrarios. Se basan en:
+
+#### 1. Datos Empíricos de Atletas
+
+| Fuente | Aporte |
+|---|---|
+| **Strength Level** | Base de datos crowdsourced de +500,000 atletas |
+| **PowerliftingToWin** | Normas de fuerza por peso corporal y nivel |
+| **NSCA** | Estándares de certificación de entrenadores |
+| **Starting Strength** | Progresiones observadas en miles de lifters |
+
+#### 2. Biomecánica y Física
+
+| Ejercicio | Razón biomecánica del ratio |
+|---|---|
+| **Press Militar (60-65%)** | Hombros solos tienen menos ventaja mecánica que pecho + tríceps con espalda apoyada |
+| **Remo / Dominadas (75-80%)** | Cadena posterior de tracción es fuerte pero no supera al empuje horizontal en la mayoría |
+| **Sentadilla (120-140%)** | Piernas son el grupo muscular más grande del cuerpo |
+| **Peso Muerto (150%+)** | Cadena posterior completa + ventaja de rango de movimiento |
+
+#### 3. Consenso de Entrenadores
+
+Ratios comúnmente aceptados en la industria del entrenamiento de fuerza.
+
+---
+
+### Márgenes de Tolerancia
+
+Los ratios **no son exactos universalmente**. Varían por:
+
+- **Sexo:** Mujeres suelen tener diferentes ratios en tren superior
+- **Antropometría:** Brazos largos/cortos afectan la mecánica del movimiento
+- **Historial:** Lesiones previas, años de experiencia
+- **Especialización:** Powerlifter vs corredor vs atleta de equipo
+
+Por eso Athletera marca **deficiencia** solo con desviación **≤ -15%**, dejando margen para variación individual.
+
+---
+
+### Referencias Bibliográficas
+
+1. Epley, B. (1985). *Tonage figures in the bench press and squat*.
+2. NSCA. (2021). *Essentials of Strength Training and Conditioning* (4th ed.).
+3. Rippetoe, M. (2011). *Starting Strength* (3rd ed.).
+4. Strength Level. (2024). *Strength Standards Database*. https://strengthlevel.com
+5. PowerliftingToWin. (2024). *Powerlifting Standards*. https://powerliftingtowin.com
+
+---
