@@ -1,3 +1,4 @@
+import { AthleteProfileForm } from './components/AthleteProfileForm';
 import { ExerciseForm } from './components/ExerciseForm';
 import { RadarChart } from './components/RadarChart';
 import { ResultsSummary } from './components/ResultsSummary';
@@ -11,7 +12,17 @@ const EXERCISES: { id: ExerciseId; label: string }[] = (Object.keys(EXERCISE_LAB
 }));
 
 export default function App() {
-  const { metrics, results, error, pivot1RM, updateMetric, addMetric, removeMetric } = useStrengthLogic();
+  const {
+    profile,
+    metrics,
+    results,
+    errors,
+    pivot1RM,
+    updateProfile,
+    updateMetric,
+    addMetric,
+    removeMetric,
+  } = useStrengthLogic();
 
   const availableExercises = EXERCISES.filter((e) => !metrics.some((m) => m.exerciseId === e.id));
 
@@ -24,6 +35,8 @@ export default function App() {
         {pivot1RM && <p className="text-sm mt-2">1RM Pivot: <strong>{pivot1RM} kg</strong></p>}
       </header>
 
+      <AthleteProfileForm profile={profile} onChange={updateProfile} />
+
       <ExerciseForm
         metrics={metrics}
         availableExercises={availableExercises}
@@ -32,7 +45,16 @@ export default function App() {
         onRemove={removeMetric}
       />
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {errors.length > 0 && (
+        <section className="rounded-xl border border-red-200 bg-red-50 p-3">
+          <h3 className="text-sm font-semibold text-red-700">Corrige lo siguiente</h3>
+          <ul className="list-disc pl-5 text-sm text-red-700">
+            {errors.map((error) => (
+              <li key={error}>{error}</li>
+            ))}
+          </ul>
+        </section>
+      )}
 
       <section className="rounded-xl border p-4 bg-white space-y-3">
         <h2 className="font-semibold">Comparativa Ideal vs Actual</h2>

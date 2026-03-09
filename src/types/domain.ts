@@ -1,6 +1,12 @@
 export type AthleteCategory = 'powerlifting' | 'football' | 'general_fitness' | 'running';
 export type AthleteLevel = 'beginner' | 'intermediate' | 'advanced';
 
+export interface AthleteProfile {
+  category: AthleteCategory;
+  level: AthleteLevel;
+  bodyWeightKg?: number;
+}
+
 export type ExerciseId =
   | 'bench_press'
   | 'overhead_press'
