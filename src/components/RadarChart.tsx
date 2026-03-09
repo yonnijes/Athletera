@@ -7,7 +7,7 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from 'recharts';
-import { getMidIdealRatio } from '../utils/calculators';
+import { getMidIdealRatio, formatExercise } from '../utils/calculators';
 import type { AssessmentResult } from '../types/domain';
 
 interface RadarChartProps {
@@ -20,7 +20,7 @@ export function RadarChart({ results }: RadarChartProps) {
     const actualRatio = idealRatio * (r.percentageEfficiency / 100);
 
     return {
-      exercise: r.exercise,
+      exercise: formatExercise(r.exercise),
       ideal: Number((idealRatio * 100).toFixed(2)),
       actual: Number((actualRatio * 100).toFixed(2)),
     };
