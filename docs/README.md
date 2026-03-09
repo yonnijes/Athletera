@@ -1,17 +1,56 @@
-# Documentación de Athletera
+# Athletera - Documentación
 
-Documentación orientada a **humanos** (usuarios finales, entrenadores, atletas).
+> Evaluador de balance muscular para atletas basado en 1RM estimado.
 
-## Índice
+## ¿Qué es Athletera?
 
-- [Guía de Inicio Rápido](./guiainicio.md) — Cómo usar la app en 5 minutos
-- [Manual de Usuario](./manual.md) — Funcionalidades completas
-- [Preguntas Frecuentes](./faq.md) — Dudas comunes
-- [Glosario](./glosario.md) — Términos técnicos explicados
+Athletera es una herramienta de diagnóstico que identifica **desequilibrios musculares** comparando tu rendimiento en ejercicios clave contra ratios estándar de la industria.
 
-## ¿Eres desarrollador?
+Calcula tu **1RM estimado** (fórmula de Epley) y lo contrasta con ratios ideales para detectar deficiencias y generar recomendaciones de entrenamiento.
 
-Si buscas documentación técnica (arquitectura, ratios, fórmulas), ve a:
-- `.specify/constitution.md` — Principios del proyecto
-- `.specify/spec.md` — Especificación de negocio
-- `.specify/plan.md` — Plan técnico
+## Stack Tecnológico
+
+| Tecnología | Versión | Propósito |
+|---|---|---|
+| React | 18.x | Framework UI |
+| TypeScript | 5.x | Tipado estático |
+| Vite | 5.x | Build tool + dev server |
+| Tailwind CSS | 3.x | Estilos |
+| Recharts | 2.x | Gráficos (radar) |
+| Vitest | 2.x | Testing |
+
+## Instalación Rápida
+
+```bash
+# Clonar repo
+git clone https://github.com/yonnijes/Athletera.git
+cd Athletera
+
+# Instalar dependencias
+pnpm install
+
+# Iniciar dev server
+pnpm dev
+
+# Build para producción
+pnpm build
+
+# Correr tests
+pnpm test
+```
+
+## Estructura de Documentación
+
+| Archivo | Propósito | Audiencia |
+|---|---|---|
+| [README.md](./README.md) | Esta puerta de entrada | Todos |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | Flujo de datos y arquitectura | Devs |
+| [DATA_MODELS.md](./DATA_MODELS.md) | Diccionario de tipos y datos | Devs |
+| [USER_GUIDE.md](./USER_GUIDE.md) | Manual de uso | Usuarios |
+| [ADR/](./ADR/) | Decisiones arquitectónicas | Devs |
+
+## Enlaces Rápidos
+
+- [Repo GitHub](https://github.com/yonnijes/Athletera)
+- [Especificación técnica](../.specify/spec.md)
+- [Constitución del proyecto](../.specify/constitution.md)

@@ -1,58 +1,67 @@
 # Athletera
 
-MVP para diagnóstico de desequilibrios musculares en atletas usando 1RM estimado (fórmula de Epley), ratios de referencia y recomendaciones de entrenamiento.
+> Evaluador de balance muscular para atletas basado en 1RM estimado.
 
-## 📁 Estructura de Documentación
+![Estado](https://img.shields.io/badge/estado-MVP-blue)
+![Stack](https://img.shields.io/badge/stack-React+TS+Tailwind-0ea5e9)
 
-```
-.specify/           # El "Cerebro" del proyecto
-├── constitution.md # Principios inamovibles (tech stack, reglas de salud)
-├── spec.md         # La verdad del negocio (ratios, fórmulas de 1RM)
-└── plan.md         # Roadmap técnico y arquitectura
-```
+## ¿Qué es?
+
+Athletera identifica **desequilibrios musculares** comparando tu rendimiento en ejercicios clave contra ratios estándar de la industria.
+
+- 📊 Calcula 1RM estimado (fórmula de Epley)
+- ⚖️ Compara contra ratios ideales (Bench = 100%)
+- 🎯 Detecta deficiencias y genera recomendaciones
+- 💾 Persiste datos en LocalStorage
 
 ## Stack
 
-- React + Vite + TypeScript (strict)
-- Tailwind CSS
-- Recharts
-- Vitest
+| Tecnología | Propósito |
+|---|---|
+| React 18 + Vite | Framework UI + Build |
+| TypeScript 5 | Tipado estricto |
+| Tailwind CSS 3 | Estilos mobile-first |
+| Recharts 2 | Gráfico de radar |
+| Vitest 2 | Tests unitarios |
+
+## Instalación
+
+```bash
+git clone https://github.com/yonnijes/Athletera.git
+cd Athletera
+pnpm install
+pnpm dev
+```
 
 ## Scripts
 
 ```bash
-pnpm install
-pnpm dev
-pnpm test
-pnpm build
+pnpm dev      # Dev server
+pnpm build    # Build producción
+pnpm test     # Tests unitarios
+pnpm preview  # Preview build
 ```
 
-## Estado Actual
+## Documentación
 
-- ✅ Core matemático implementado (`src/utils/calculators.ts`)
-- ✅ Ratios y pivot definidos (`src/constants/ratios.ts`)
-- ✅ Hook de lógica con persistencia en LocalStorage (`src/hooks/useStrengthLogic.ts`)
-- ✅ UI base mobile-first (`ExerciseForm`, `ResultsSummary`, `RadarChart`)
-- ✅ Selector de perfil de atleta (categoría + nivel + peso corporal)
-- ✅ Validaciones UX en tiempo real
+| Doc | Audiencia |
+|---|---|
+| [docs/README.md](./docs/README.md) | Todos — Puerta de entrada |
+| [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md) | Devs — Flujo de datos |
+| [docs/DATA_MODELS.md](./docs/DATA_MODELS.md) | Devs — Tipos y estructuras |
+| [docs/USER_GUIDE.md](./docs/USER_GUIDE.md) | Usuarios — Manual de uso |
+| [docs/ADR/](./docs/ADR/) | Devs — Decisiones arquitectónicas |
+| [.specify/](./.specify/) | Devs — Especificación técnica |
 
-## Cómo funciona el cálculo de ratios
+## Estado del MVP
 
-**Press Militar = 60-65% del Press de Banca**
+- ✅ Core de cálculo (1RM Epley, ratios, diagnóstico)
+- ✅ UI mobile-first con validaciones en tiempo real
+- ✅ Gráfico de radar comparativo
+- ✅ Persistencia LocalStorage
+- ✅ Selector de perfil de atleta
+- ✅ Documentación completa
 
-Esto se define en `src/constants/ratios.ts`:
+## Licencia
 
-```ts
-export const IDEAL_RATIO_RANGES: Partial<Record<ExerciseId, RatioRange>> = {
-  overhead_press: { min: 0.6, max: 0.65 }, // 60% - 65%
-  // ...
-};
-```
-
-El sistema:
-1. Calcula el 1RM de cada ejercicio (fórmula de Epley)
-2. Usa Press de Banca como pivot (100%)
-3. Compara cada ejercicio contra su ratio ideal
-4. Marca deficiencia si la desviación es < -15%
-
-Ver `.specify/spec.md` para detalles completos.
+MIT
