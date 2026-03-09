@@ -1,1 +1,0 @@
-{"root":["./src/App.tsx","./src/main.tsx","./src/components/ExerciseForm.tsx","./src/components/RadarChart.tsx","./src/components/ResultsSummary.tsx","./src/constants/ratios.ts","./src/hooks/useStrengthLogic.ts","./src/types/domain.ts","./src/utils/calculators.test.ts","./src/utils/calculators.ts"],"version":"5.9.3"}

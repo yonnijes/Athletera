@@ -19,3 +19,6 @@ Thumbs.db
 build/
 dist/
 coverage/
+
+# TypeScript build info
+*.tsbuildinfo
