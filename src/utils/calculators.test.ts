@@ -177,9 +177,10 @@ describe('assessMetrics', () => {
     ]);
 
     expect(results).toHaveLength(1);
-    expect(results[0].exercise).toBe('overhead_press');
-    expect(results[0].current1RM).toBe(76);
-    expect(results[0].percentageEfficiency).toBeCloseTo(91.2, 0);
+    const result = results[0]!;
+    expect(result.exercise).toBe('overhead_press');
+    expect(result.current1RM).toBe(76);
+    expect(result.percentageEfficiency).toBeCloseTo(91.2, 0);
   });
 
   it('marca como critical cuando hay deficiencia significativa', () => {
@@ -188,6 +189,6 @@ describe('assessMetrics', () => {
       { exerciseId: 'overhead_press', weightKg: 40, reps: 6 }, // Muy bajo
     ]);
 
-    expect(results[0].status).toBe('critical');
+    expect(results[0]!.status).toBe('critical');
   });
 });
