@@ -10,6 +10,7 @@ import {
   STRENGTH_LEVEL_LABELS,
   PUSH_EXERCISES,
   PULL_EXERCISES,
+  ENDURANCE_EXERCISES,
 } from '../constants/strengthStandards';
 import type {
   AssessmentResult,
@@ -21,6 +22,24 @@ import type {
 } from '../types/domain';
 
 const round2 = (n: number): number => Math.round(n * 100) / 100;
+
+/**
+ * Evalúa el test de resistencia para Face Pulls
+ * Devuelve el 1RM "equivalente" basado en poder hacer 15 reps con X% del bench
+ */
+export function evaluateEnduranceTest(
+  weightKg: number,
+  reps: number,
+  bench1RM: number,
+  targetReps: number = 15,
+  targetPercentage: number = 0.1
+): { passed: boolean; actualPercentage: number; equivalent1RM: number } {
+  const actualPercentage = weightKg / bench1RM;
+  const passed = reps >= targetReps && actualPercentage >= targetPercentage;
+  // Convertir a 1RM equivalente usando Epley inverso
+  const equivalent1RM = estimate1RM(weightKg, reps);
+  return { passed, actualPercentage: round2(actualPercentage), equivalent1RM };
+}
 
 export function estimate1RM(weightKg: number, reps: number): number {
   if (!Number.isFinite(weightKg) || !Number.isFinite(reps)) {
@@ -77,6 +96,9 @@ export function buildRecommendation(
     weighted_pull_up: 'Mejorar tracción vertical (dominadas estrictas y trabajo de dorsales).',
     squat: 'Elevar fuerza de tren inferior (sentadilla frontal, tempo squats).',
     deadlift: 'Reforzar cadena posterior (RDL, hip thrust, bisagra técnica).',
+    dips: 'Fortalecer tríceps y hombro inferior (fondos asistidos, press cerrado).',
+    tricep_extension: 'El tríceps puede estar limitando tu press. Aislar con press francés y extensiones.',
+    face_pull: 'CRÍTICO: Mejorar resistencia del manguito rotador para prevenir lesiones de hombro.',
   };
 
   const levelTip = levelAdvice[strengthLevel || 'novice'] || 'Incrementar volumen específico.';
@@ -164,7 +186,31 @@ export function assessMetrics(
   return metrics
     .filter((m) => m.exerciseId !== PIVOT_EXERCISE)
     .map((metric) => {
-      const current1RM = estimate1RM(metric.weightKg, metric.reps);
+      // Manejo especial para ejercicios de resistencia (face_pull)
+      let current1RM: number;
+      let statusOverride: 'optimal' | 'warning' | 'critical' | undefined;
+      let recommendationOverride: string | undefined;
+
+      if (ENDURANCE_EXERCISES.includes(metric.exerciseId)) {
+        // Para face_pull, evaluamos el test de resistencia
+        const enduranceResult = evaluateEnduranceTest(
+          metric.weightKg,
+          metric.reps,
+          pivot1RM,
+          15, // target reps
+          0.1 // 10% del bench
+        );
+        current1RM = enduranceResult.equivalent1RM;
+        
+        // Si no pasa el test de resistencia, marcar como crítico
+        if (!enduranceResult.passed) {
+          statusOverride = 'critical';
+          recommendationOverride = `CRÍTICO: No completaste 15 reps con ${metric.weightKg} kg (${(enduranceResult.actualPercentage * 100).toFixed(0)}% del bench). El manguito rotador necesita trabajo de resistencia urgente para prevenir lesiones.`;
+        }
+      } else {
+        current1RM = estimate1RM(metric.weightKg, metric.reps);
+      }
+
       const actualRatio = computeCurrentRatio(current1RM, pivot1RM);
       const idealRatio = getMidIdealRatio(metric.exerciseId);
 
@@ -200,7 +246,8 @@ export function assessMetrics(
       const target1RM = round2(pivot1RM * idealRatio);
       const percentageEfficiency = round2((actualRatio / idealRatio) * 100);
       const deviation = computeDeviationPct(actualRatio, idealRatio);
-      const status = classifyStatus(deviation);
+      const status = statusOverride ?? classifyStatus(deviation);
+      const recommendation = recommendationOverride ?? buildRecommendation(metric.exerciseId, status, strengthLevel);
 
       return {
         exercise: metric.exerciseId,
@@ -208,7 +255,7 @@ export function assessMetrics(
         target1RM,
         percentageEfficiency,
         status,
-        recommendation: buildRecommendation(metric.exerciseId, status, strengthLevel),
+        recommendation,
         strengthLevel,
         levelProgress,
         relativeRatio,

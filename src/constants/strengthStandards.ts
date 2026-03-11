@@ -67,13 +67,48 @@ export const STRENGTH_STANDARDS: Record<ExerciseId, ExerciseStandard> = {
     function: 'Cadena Posterior',
     movementPattern: 'hinge',
   },
+  dips: {
+    standard: {
+      novice: 0.88,   // 110% de bench novice (incluye peso corporal)
+      intermediate: 1.32, // 110% de bench intermediate
+      advanced: 1.65, // 110% de bench advanced
+      elite: 1.98,
+    },
+    function: 'Empuje Vertical (Tríceps/Hombro Inferior)',
+    movementPattern: 'push_vertical',
+  },
+  tricep_extension: {
+    standard: {
+      novice: 0.16,   // 20% de bench novice
+      intermediate: 0.24, // 20% de bench intermediate
+      advanced: 0.3,  // 20% de bench advanced
+      elite: 0.36,
+    },
+    function: 'Aislamiento de Tríceps',
+    movementPattern: 'push_vertical',
+  },
+  face_pull: {
+    standard: {
+      novice: 0.08,   // 10% de bench para 15 reps (resistencia)
+      intermediate: 0.1, // 12.5% de bench
+      advanced: 0.12, // 15% de bench
+      elite: 0.15,
+    },
+    function: 'Salud del Manguito Rotador (Resistencia)',
+    movementPattern: 'pull_horizontal',
+  },
 };
 
 /**
  * Mapeo de ejercicios a patrones de movimiento para análisis cross-ejercicio
  */
-export const PUSH_EXERCISES: ExerciseId[] = ['bench_press', 'overhead_press'];
-export const PULL_EXERCISES: ExerciseId[] = ['barbell_row', 'weighted_pull_up'];
+export const PUSH_EXERCISES: ExerciseId[] = ['bench_press', 'overhead_press', 'dips', 'tricep_extension'];
+export const PULL_EXERCISES: ExerciseId[] = ['barbell_row', 'weighted_pull_up', 'face_pull'];
+
+/**
+ * Ejercicios que NO usan 1RM estándar (ej: face_pull usa test de resistencia)
+ */
+export const ENDURANCE_EXERCISES: ExerciseId[] = ['face_pull'];
 
 /**
  * Determina el nivel de fuerza basado en el 1RM vs peso corporal
