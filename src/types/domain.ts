@@ -3,6 +3,8 @@ export type AthleteLevel = 'beginner' | 'intermediate' | 'advanced';
 
 export type StrengthLevel = 'novice' | 'intermediate' | 'advanced' | 'elite';
 
+export type MovementPattern = 'push_horizontal' | 'push_vertical' | 'pull_horizontal' | 'pull_vertical' | 'squat' | 'hinge';
+
 export interface AthleteProfile {
   category: AthleteCategory;
   level: AthleteLevel;
@@ -15,7 +17,10 @@ export type ExerciseId =
   | 'barbell_row'
   | 'weighted_pull_up'
   | 'squat'
-  | 'deadlift';
+  | 'deadlift'
+  | 'dips'
+  | 'tricep_extension'
+  | 'face_pull';
 
 export interface StrengthMetrics {
   exerciseId: ExerciseId;
@@ -34,6 +39,8 @@ export interface AssessmentResult {
   recommendation: string;
   strengthLevel?: StrengthLevel;
   levelProgress?: number;
+  relativeRatio?: number; // 1RM / bodyWeight
+  movementPattern?: MovementPattern;
 }
 
 export interface StrengthStandard {
@@ -46,4 +53,16 @@ export interface StrengthStandard {
 export interface ExerciseStandard {
   standard: StrengthStandard;
   function: string;
+  movementPattern: MovementPattern;
+}
+
+export interface CrossExerciseAlert {
+  type: 'push_pull_imbalance';
+  severity: 'critical' | 'warning';
+  pushExercise: ExerciseId;
+  pullExercise: ExerciseId;
+  pushLevel: StrengthLevel;
+  pullLevel: StrengthLevel;
+  levelDifference: number;
+  message: string;
 }

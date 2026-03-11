@@ -8,8 +8,17 @@ import {
   STRENGTH_STANDARDS,
   determineStrengthLevel,
   STRENGTH_LEVEL_LABELS,
+  PUSH_EXERCISES,
+  PULL_EXERCISES,
 } from '../constants/strengthStandards';
-import type { AssessmentResult, ExerciseId, StrengthMetrics } from '../types/domain';
+import type {
+  AssessmentResult,
+  ExerciseId,
+  StrengthMetrics,
+  StrengthLevel,
+  CrossExerciseAlert,
+  MovementPattern,
+} from '../types/domain';
 
 const round2 = (n: number): number => Math.round(n * 100) / 100;
 
@@ -76,6 +85,71 @@ export function buildRecommendation(
   return exerciseTip ? `${levelTip} ${exerciseTip}` : levelTip;
 }
 
+/**
+ * Calcula el nivel numérico para comparar diferencias entre niveles
+ */
+function strengthLevelToNumber(level: StrengthLevel): number {
+  switch (level) {
+    case 'novice': return 0;
+    case 'intermediate': return 1;
+    case 'advanced': return 2;
+    case 'elite': return 3;
+  }
+}
+
+/**
+ * Detecta desequilibrios críticos entre ejercicios de empuje y tracción
+ */
+export function detectCrossExerciseImbalance(
+  results: AssessmentResult[]
+): CrossExerciseAlert[] {
+  const alerts: CrossExerciseAlert[] = [];
+
+  // Obtener ejercicios de empuje y tracción con sus niveles
+  const pushResults = results.filter((r) =>
+    PUSH_EXERCISES.includes(r.exercise) || r.exercise === PIVOT_EXERCISE
+  );
+  const pullResults = results.filter((r) => PULL_EXERCISES.includes(r.exercise));
+
+  // Comparar cada par push-pull
+  for (const push of pushResults) {
+    for (const pull of pullResults) {
+      if (!push.strengthLevel || !pull.strengthLevel) continue;
+
+      const pushLevelNum = strengthLevelToNumber(push.strengthLevel);
+      const pullLevelNum = strengthLevelToNumber(pull.strengthLevel);
+      const levelDifference = pushLevelNum - pullLevelNum;
+
+      // Alerta crítica si la diferencia es >= 2 niveles
+      if (levelDifference >= 2) {
+        alerts.push({
+          type: 'push_pull_imbalance',
+          severity: 'critical',
+          pushExercise: push.exercise,
+          pullExercise: pull.exercise,
+          pushLevel: push.strengthLevel,
+          pullLevel: pull.strengthLevel,
+          levelDifference,
+          message: `⚠️ ALERTA CRÍTICA: Desequilibrio peligroso entre ${formatExercise(push.exercise)} (${STRENGTH_LEVEL_LABELS[push.strengthLevel]}) y ${formatExercise(pull.exercise)} (${STRENGTH_LEVEL_LABELS[pull.strengthLevel]}). Riesgo de lesión de hombro. Priorizar tracción.`,
+        });
+      } else if (levelDifference === 1) {
+        alerts.push({
+          type: 'push_pull_imbalance',
+          severity: 'warning',
+          pushExercise: push.exercise,
+          pullExercise: pull.exercise,
+          pushLevel: push.strengthLevel,
+          pullLevel: pull.strengthLevel,
+          levelDifference,
+          message: `⚡ Advertencia: ${formatExercise(push.exercise)} está un nivel por encima de ${formatExercise(pull.exercise)}. Considerar equilibrar volumen de tracción.`,
+        });
+      }
+    }
+  }
+
+  return alerts;
+}
+
 export function assessMetrics(
   metrics: StrengthMetrics[],
   bodyWeightKg?: number
@@ -97,12 +171,16 @@ export function assessMetrics(
       // Calcular nivel de fuerza si hay peso corporal
       let strengthLevel: 'novice' | 'intermediate' | 'advanced' | 'elite' | undefined;
       let levelProgress: number | undefined;
+      let relativeRatio: number | undefined;
 
       if (bodyWeightKg && bodyWeightKg > 0) {
         const levelData = determineStrengthLevel(current1RM, bodyWeightKg, metric.exerciseId);
         strengthLevel = levelData.level;
         levelProgress = round2(levelData.progress);
+        relativeRatio = round2(current1RM / bodyWeightKg);
       }
+
+      const movementPattern = STRENGTH_STANDARDS[metric.exerciseId]?.movementPattern;
 
       if (!idealRatio) {
         return {
@@ -114,6 +192,8 @@ export function assessMetrics(
           recommendation: 'No existe ratio ideal configurado para este ejercicio.',
           strengthLevel,
           levelProgress,
+          relativeRatio,
+          movementPattern,
         } satisfies AssessmentResult;
       }
 
@@ -131,6 +211,8 @@ export function assessMetrics(
         recommendation: buildRecommendation(metric.exerciseId, status, strengthLevel),
         strengthLevel,
         levelProgress,
+        relativeRatio,
+        movementPattern,
       } satisfies AssessmentResult;
     });
 }

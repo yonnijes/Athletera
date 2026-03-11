@@ -58,17 +58,68 @@ Donde $P$ es el peso y $n$ es el número de repeticiones.
 | Sentadilla | 0.8× BW | 1.2× BW | 1.6× BW | 2.0× BW |
 | Peso Muerto | 0.96× BW | 1.44× BW | 2.0× BW | 2.4× BW |
 
-### 3.4 Algoritmo de Diagnóstico
+### 3.4 Lógica de Clasificación de Niveles
 
-1. Calcular 1RM de todos los ejercicios ingresados.
-2. **Si hay peso corporal:** Calcular nivel de fuerza para cada ejercicio.
-3. Normalizar los valores tomando el ejercicio base como el 100%.
-4. Calcular la desviación vs. ratio ideal.
-5. Si la desviación es menor a -15%, marcar como **Deficiencia**.
-6. Generar recomendación basada en:
-   - Estado del balance (óptimo/advertencia/crítico)
-   - Nivel de fuerza (novice/intermediate/advanced/elite)
-   - Ejercicio específico
+El sistema debe evaluar cada levantamiento individualmente **antes** de compararlos entre sí:
+
+#### Paso 1: Cálculo de Fuerza Relativa
+```
+Ratio_Relativo = 1RM_Estimado / Peso_Corporal
+```
+
+#### Paso 2: Asignación de Nivel por Ejercicio
+
+Cada ejercicio tiene sus propios umbrales. Ejemplo para **Press de Banca**:
+
+| Ratio Relativo | Nivel Asignado |
+|----------------|----------------|
+| < 0.8 | **Principiante** |
+| 0.8 – 1.2 | **Intermedio** |
+| 1.2 – 1.5 | **Avanzado** |
+| ≥ 1.5 | **Élite** |
+
+*Ver sección 3.3 para umbrales completos por ejercicio.*
+
+#### Paso 3: Análisis de Desequilibrio Cross-Exercise (CRÍTICO)
+
+El sistema debe detectar **descompensaciones peligrosas** incluso cuando el atleta tiene niveles altos:
+
+**Regla de Alerta Crítica:**
+> Si la diferencia entre el nivel de un ejercicio de **Empuje** (Banca, Militar) y un ejercicio de **Tracción** (Dominada, Remo) es **≥ 2 niveles**, generar **ALERTA CRÍTICA DE SALUD ARTICULAR**.
+
+**Ejemplo:**
+- Press de Banca: **Avanzado** (1.3× BW)
+- Dominada Lastrada: **Principiante** (0.6× BW)
+- → **ALERTA**: Ratio de tracción/empuje descompensado. Riesgo de lesión de hombro.
+
+**Justificación:** Un atleta fuerte en empuje pero débil en tracción tiene alta probabilidad de desarrollar:
+- Desequilibrio escapular
+- Lesiones del manguito rotador
+- Postura cifótica (hombros hacia adelante)
+
+#### Paso 4: Cálculo de Balance Relativo (Ratio vs Pivote)
+
+Una vez evaluados los niveles individuales:
+1. Normalizar los valores tomando el Press de Banca como el 100%.
+2. Calcular la desviación vs. ratio ideal (ver sección 3.2).
+3. Si la desviación es **≤ -15%**, marcar como **Deficiencia Crítica**.
+4. Si la desviación es **entre -15% y -5%**, marcar como **Advertencia**.
+
+#### Paso 5: Generación de Recomendaciones Priorizadas
+
+Las recomendaciones se ordenan por prioridad:
+
+1. **ALERTA CRÍTICA** (Cross-Exercise descompensado ≥ 2 niveles)
+2. **Deficiencia Crítica** (Ratio ≤ -15% del ideal)
+3. **Advertencia** (Ratio entre -15% y -5%)
+4. **Óptimo** (Ratio ≥ -5%)
+
+Cada recomendación incluye:
+- Estado del balance
+- Nivel de fuerza actual
+- Nivel de fuerza objetivo
+- Consejo específico del ejercicio
+- Progreso hacia el próximo nivel
 
 ## 4. Requisitos Funcionales (MVP)
 

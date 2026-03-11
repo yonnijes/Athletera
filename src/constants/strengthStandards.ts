@@ -1,4 +1,4 @@
-import type { ExerciseId, ExerciseStandard } from '../types/domain';
+import type { ExerciseId, ExerciseStandard, MovementPattern } from '../types/domain';
 
 /**
  * Estándares de fuerza por ejercicio.
@@ -15,6 +15,7 @@ export const STRENGTH_STANDARDS: Record<ExerciseId, ExerciseStandard> = {
       elite: 1.8,
     },
     function: 'Empuje Horizontal (Pivote)',
+    movementPattern: 'push_horizontal',
   },
   overhead_press: {
     standard: {
@@ -24,6 +25,7 @@ export const STRENGTH_STANDARDS: Record<ExerciseId, ExerciseStandard> = {
       elite: 1.35,
     },
     function: 'Empuje Vertical',
+    movementPattern: 'push_vertical',
   },
   barbell_row: {
     standard: {
@@ -33,6 +35,7 @@ export const STRENGTH_STANDARDS: Record<ExerciseId, ExerciseStandard> = {
       elite: 1.62,
     },
     function: 'Tracción Horizontal',
+    movementPattern: 'pull_horizontal',
   },
   weighted_pull_up: {
     standard: {
@@ -42,6 +45,7 @@ export const STRENGTH_STANDARDS: Record<ExerciseId, ExerciseStandard> = {
       elite: 1.5,
     },
     function: 'Tracción Vertical',
+    movementPattern: 'pull_vertical',
   },
   squat: {
     standard: {
@@ -51,6 +55,7 @@ export const STRENGTH_STANDARDS: Record<ExerciseId, ExerciseStandard> = {
       elite: 2.0,
     },
     function: 'Cadena Anterior (Piernas)',
+    movementPattern: 'squat',
   },
   deadlift: {
     standard: {
@@ -60,8 +65,15 @@ export const STRENGTH_STANDARDS: Record<ExerciseId, ExerciseStandard> = {
       elite: 2.4,
     },
     function: 'Cadena Posterior',
+    movementPattern: 'hinge',
   },
 };
+
+/**
+ * Mapeo de ejercicios a patrones de movimiento para análisis cross-ejercicio
+ */
+export const PUSH_EXERCISES: ExerciseId[] = ['bench_press', 'overhead_press'];
+export const PULL_EXERCISES: ExerciseId[] = ['barbell_row', 'weighted_pull_up'];
 
 /**
  * Determina el nivel de fuerza basado en el 1RM vs peso corporal
