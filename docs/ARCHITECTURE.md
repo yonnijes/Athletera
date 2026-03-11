@@ -158,3 +158,58 @@ Por eso Athletera marca **deficiencia** solo con desviación **≤ -15%**, dejan
 5. PowerliftingToWin. (2024). *Powerlifting Standards*. https://powerliftingtowin.com
 
 ---
+
+---
+
+## Matriz de Estándares de Fuerza por Nivel
+
+### Visión General
+
+Athletera ahora evalúa no solo el **balance muscular** sino también el **nivel de fuerza absoluto** de cada ejercicio, permitiendo diagnósticos como:
+
+> *"Estás en nivel **Intermedio** en Press de Banca, pero **Principiante** en Press Militar"*
+
+### Matriz Completa
+
+| Ejercicio | Principiante | Intermedio | Avanzado | Élite | Función Anatómica |
+|---|---:|---:|---:|---:|---|
+| **Press de Banca** | 0.8× BW | 1.2× BW | 1.5× BW | 1.8× BW | Empuje Horizontal (Pivote) |
+| **Press Militar** | 0.4× BW | 0.72× BW | 1.125× BW | 1.35× BW | Empuje Vertical |
+| **Remo con Barra** | 0.48× BW | 0.9× BW | 1.35× BW | 1.62× BW | Tracción Horizontal |
+| **Dominadas Lastradas** | 0.8× BW | 1.0× BW | 1.2× BW | 1.5× BW | Tracción Vertical |
+| **Sentadilla** | 0.8× BW | 1.2× BW | 1.6× BW | 2.0× BW | Cadena Anterior |
+| **Peso Muerto** | 0.96× BW | 1.44× BW | 2.0× BW | 2.4× BW | Cadena Posterior |
+
+*BW = Peso Corporal (Body Weight)*
+
+### Cálculo del Nivel
+
+```typescript
+function determineStrengthLevel(oneRM, bodyWeightKg, exerciseId) {
+  const ratio = oneRM / bodyWeightKg;
+  const standard = STRENGTH_STANDARDS[exerciseId].standard;
+  
+  if (ratio >= standard.elite) return 'elite';
+  if (ratio >= standard.advanced) return 'advanced';
+  if (ratio >= standard.intermediate) return 'intermediate';
+  return 'novice';
+}
+```
+
+### Barra de Progreso
+
+Cada ejercicio muestra una barra de progreso hacia el **siguiente nivel**:
+
+```
+Principiante [████████░░] 80% → Intermedio
+```
+
+Esto motiva al usuario mostrando cuánto falta para alcanzar el próximo hito.
+
+### Fuentes
+
+- **Strength Level** (strengthlevel.com) — Base de datos crowdsourced
+- **Starting Strength** (Rippetoe) — Progresiones documentadas
+- **NSCA Standards** — Certificación de entrenadores
+
+---
