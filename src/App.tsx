@@ -73,8 +73,15 @@ export default function App() {
       </section>
 
       <section className="rounded-xl border p-4 bg-white space-y-2" aria-labelledby="results-title">
-        <h2 id="results-title" className="font-semibold">Resumen de diagnóstico</h2>
-        <ResultsSummary results={results} />
+        <h2 id="results-title" className="font-semibold">
+          Resumen de diagnóstico
+          {profile.bodyWeightKg && (
+            <span className="ml-2 text-xs font-normal text-slate-500">
+              (con peso corporal: {profile.bodyWeightKg} kg)
+            </span>
+          )}
+        </h2>
+        <ResultsSummary results={results} bodyWeightKg={profile.bodyWeightKg} />
       </section>
     </main>
   );

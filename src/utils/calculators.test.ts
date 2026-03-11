@@ -130,8 +130,9 @@ describe('buildRecommendation', () => {
     expect(buildRecommendation('squat', 'warning')).toContain('sentadilla frontal');
   });
 
-  it('devuelve recomendación genérica para ejercicio desconocido', () => {
-    expect(buildRecommendation('bench_press', 'warning')).toContain('volumen específico');
+  it('devuelve recomendación con consejo de nivel para ejercicio sin advice específico', () => {
+    const rec = buildRecommendation('bench_press', 'warning', 'novice');
+    expect(rec).toContain('técnica');
   });
 });
 

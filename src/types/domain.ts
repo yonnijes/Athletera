@@ -1,6 +1,8 @@
 export type AthleteCategory = 'powerlifting' | 'football' | 'general_fitness' | 'running';
 export type AthleteLevel = 'beginner' | 'intermediate' | 'advanced';
 
+export type StrengthLevel = 'novice' | 'intermediate' | 'advanced' | 'elite';
+
 export interface AthleteProfile {
   category: AthleteCategory;
   level: AthleteLevel;
@@ -30,4 +32,18 @@ export interface AssessmentResult {
   percentageEfficiency: number;
   status: AssessmentStatus;
   recommendation: string;
+  strengthLevel?: StrengthLevel;
+  levelProgress?: number;
+}
+
+export interface StrengthStandard {
+  novice: number;
+  intermediate: number;
+  advanced: number;
+  elite: number;
+}
+
+export interface ExerciseStandard {
+  standard: StrengthStandard;
+  function: string;
 }

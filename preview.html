@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Athletera - Preview</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, -apple-system, sans-serif; background: #f8fafc; color: #0f172a; padding: 16px; max-width: 414px; margin: 0 auto; }
+    .card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+    h1 { font-size: 24px; font-weight: 700; margin-bottom: 4px; }
+    h2 { font-size: 16px; font-weight: 600; margin-bottom: 12px; }
+    .subtitle { color: #64748b; font-size: 14px; margin-bottom: 8px; }
+    .label { display: block; font-size: 14px; color: #334155; margin-bottom: 4px; font-weight: 500; }
+    .input { width: 100%; padding: 8px 12px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 14px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .btn { background: #0ea5e9; color: white; border: none; padding: 8px 16px; border-radius: 999px; font-size: 12px; cursor: pointer; }
+    .pill { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 12px; }
+    .pill-optimal { background: #dcfce7; color: #166534; }
+    .pill-warning { background: #fef3c7; color: #92400e; }
+    .pill-critical { background: #fee2e2; color: #991b1b; }
+    .radar-placeholder { height: 288px; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-direction: column; color: #64748b; }
+    .legend { display: flex; gap: 16px; justify-content: center; margin-top: 12px; font-size: 12px; }
+    .legend-item { display: flex; align-items: center; gap: 4px; }
+    .legend-color { width: 16px; height: 16px; border-radius: 4px; }
+    .result-item { background: #f8fafc; padding: 12px; border-radius: 8px; margin-bottom: 8px; }
+    .result-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .result-name { font-weight: 600; font-size: 14px; }
+    .result-stat { font-size: 13px; color: #64748b; }
+    .highlight { color: #0ea5e9; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <header style="margin-bottom: 16px;">
+    <h1>Athletera MVP</h1>
+    <p class="subtitle">Evaluador de balance muscular basado en 1RM (Epley).</p>
+    <p style="font-size: 12px; color: #94a3b8;">1RM Pivot: <strong>101.33 kg</strong></p>
+  </header>
+
+  <section class="card">
+    <h2>Perfil de atleta</h2>
+    <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">Esta información se usará en futuras versiones.</p>
+    <label class="label">Categoría</label>
+    <select class="input" style="margin-bottom: 12px;">
+      <option>General Fitness</option>
+      <option>Powerlifting</option>
+      <option>Fútbol</option>
+      <option>Running</option>
+    </select>
+    <label class="label">Peso corporal (kg)</label>
+    <input type="number" class="input" value="75" placeholder="Ej: 75" />
+  </section>
+
+  <section class="card">
+    <h2>Métricas de ejercicios</h2>
+    <p style="font-size: 12px; color: #94a3b8; margin-bottom: 12px;">El Press de Banca es obligatorio como referencia.</p>
+    
+    <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+        <label class="label">Press de Banca <span style="color: #0ea5e9;">(Obligatorio)</span></label>
+      </div>
+      <div class="grid">
+        <div>
+          <label class="label" style="font-size: 12px;">Peso (kg)</label>
+          <input type="number" class="input" value="80" />
+        </div>
+        <div>
+          <label class="label" style="font-size: 12px;">Repeticiones</label>
+          <input type="number" class="input" value="8" />
+        </div>
+      </div>
+      <p style="font-size: 12px; margin-top: 8px;">1RM: <strong>101.33 kg</strong></p>
+    </div>
+
+    <div style="border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+        <label class="label">Press Militar</label>
+        <button style="background: none; border: none; color: #ef4444; font-size: 12px; cursor: pointer;">Quitar</button>
+      </div>
+      <div class="grid">
+        <div>
+          <label class="label" style="font-size: 12px;">Peso (kg)</label>
+          <input type="number" class="input" value="45" />
+        </div>
+        <div>
+          <label class="label" style="font-size: 12px;">Repeticiones</label>
+          <input type="number" class="input" value="6" />
+        </div>
+      </div>
+      <p style="font-size: 12px; margin-top: 8px;">1RM: <strong>54.00 kg</strong></p>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+      <button class="btn" style="background: white; color: #334155; border: 1px solid #cbd5e1;">+ Press Militar</button>
+      <button class="btn" style="background: white; color: #334155; border: 1px solid #cbd5e1;">+ Remo con Barra</button>
+      <button class="btn" style="background: white; color: #334155; border: 1px solid #cbd5e1;">+ Sentadilla</button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Comparativa Ideal vs Actual</h2>
+    <div class="radar-placeholder">
+      <div style="width: 200px; height: 200px; border: 2px solid #94a3b8; border-radius: 50%; position: relative; display: flex; align-items: center; justify-content: center;">
+        <div style="width: 140px; height: 140px; border: 2px solid #0ea5e9; border-radius: 50%; background: rgba(14, 165, 233, 0.2);"></div>
+        <div style="position: absolute; top: -20px; font-size: 12px; color: #64748b;">📊 Gráfico de Radar</div>
+      </div>
+      <p style="font-size: 12px; margin-top: 12px;">Área gris = Ideal | Área azul = Tu rendimiento</p>
+    </div>
+    <div class="legend">
+      <div class="legend-item">
+        <div class="legend-color" style="background: #94a3b8;"></div>
+        <span>Ratio Ideal</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-color" style="background: #38bdf8;"></div>
+        <span>Tu Rendimiento</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Resumen de diagnóstico</h2>
+    
+    <div class="result-item">
+      <div class="result-header">
+        <span class="result-name">Press Militar</span>
+        <span class="pill pill-warning">🟡 Advertencia</span>
+      </div>
+      <p class="result-stat">Eficiencia: <strong style="color: #d97706;">88%</strong></p>
+      <p class="result-stat">1RM actual: 54 kg | 1RM objetivo: 63 kg</p>
+      <p style="font-size: 13px; color: #64748b; margin-top: 8px;">Aumentar trabajo de hombro/estabilidad escapular (Face Pulls, Press Arnold).</p>
+    </div>
+
+    <div class="result-item">
+      <div class="result-header">
+        <span class="result-name">Sentadilla</span>
+        <span class="pill pill-optimal">🟢 Óptimo</span>
+      </div>
+      <p class="result-stat">Eficiencia: <strong style="color: #16a34a;">102%</strong></p>
+      <p class="result-stat">1RM actual: 130 kg | 1RM objetivo: 127 kg</p>
+      <p style="font-size: 13px; color: #64748b; margin-top: 8px;">Mantener progresión y técnica actual.</p>
+    </div>
+  </section>
+
+  <footer style="text-align: center; color: #94a3b8; font-size: 12px; padding: 16px 0;">
+    Athletera v0.1.0 • github.com/yonnijes/Athletera
+  </footer>
+</body>
+</html>

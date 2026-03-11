@@ -4,6 +4,11 @@ import {
   IDEAL_RATIO_RANGES,
   PIVOT_EXERCISE,
 } from '../constants/ratios';
+import {
+  STRENGTH_STANDARDS,
+  determineStrengthLevel,
+  STRENGTH_LEVEL_LABELS,
+} from '../constants/strengthStandards';
 import type { AssessmentResult, ExerciseId, StrengthMetrics } from '../types/domain';
 
 const round2 = (n: number): number => Math.round(n * 100) / 100;
@@ -40,20 +45,41 @@ export function classifyStatus(deviationPct: number): 'optimal' | 'warning' | 'c
   return 'optimal';
 }
 
-export function buildRecommendation(exerciseId: ExerciseId, status: 'optimal' | 'warning' | 'critical'): string {
-  if (status === 'optimal') return 'Mantener progresión y técnica actual.';
+export function buildRecommendation(
+  exerciseId: ExerciseId,
+  status: 'optimal' | 'warning' | 'critical',
+  strengthLevel?: 'novice' | 'intermediate' | 'advanced' | 'elite'
+): string {
+  if (status === 'optimal') {
+    if (strengthLevel === 'elite') return '¡Nivel élite! Considera competir o especializarte.';
+    if (strengthLevel === 'advanced') return 'Nivel avanzado. Mantener progresión y técnica.';
+    return 'Mantener progresión y técnica actual.';
+  }
 
-  const map: Partial<Record<ExerciseId, string>> = {
+  const levelAdvice: Partial<Record<'novice' | 'intermediate' | 'advanced' | 'elite', string>> = {
+    novice: 'Enfocarse en técnica y consistencia antes de aumentar carga.',
+    intermediate: 'Priorizar sobrecarga progresiva en este patrón.',
+    advanced: 'Revisar periodización y recuperación específica.',
+  };
+
+  const exerciseAdvice: Partial<Record<ExerciseId, string>> = {
     overhead_press: 'Aumentar trabajo de hombro/estabilidad escapular (Face Pulls, Press Arnold).',
     barbell_row: 'Priorizar tracción horizontal (remo con pausa, control excéntrico).',
     weighted_pull_up: 'Mejorar tracción vertical (dominadas estrictas y trabajo de dorsales).',
     squat: 'Elevar fuerza de tren inferior (sentadilla frontal, tempo squats).',
     deadlift: 'Reforzar cadena posterior (RDL, hip thrust, bisagra técnica).',
   };
-  return map[exerciseId] ?? 'Incrementar volumen específico y revisar técnica.';
+
+  const levelTip = levelAdvice[strengthLevel || 'novice'] || 'Incrementar volumen específico.';
+  const exerciseTip = exerciseAdvice[exerciseId];
+
+  return exerciseTip ? `${levelTip} ${exerciseTip}` : levelTip;
 }
 
-export function assessMetrics(metrics: StrengthMetrics[]): AssessmentResult[] {
+export function assessMetrics(
+  metrics: StrengthMetrics[],
+  bodyWeightKg?: number
+): AssessmentResult[] {
   if (metrics.length < 2) throw new Error('Debes ingresar al menos dos ejercicios para comparar.');
 
   const pivotMetric = metrics.find((m) => m.exerciseId === PIVOT_EXERCISE);
@@ -68,6 +94,16 @@ export function assessMetrics(metrics: StrengthMetrics[]): AssessmentResult[] {
       const actualRatio = computeCurrentRatio(current1RM, pivot1RM);
       const idealRatio = getMidIdealRatio(metric.exerciseId);
 
+      // Calcular nivel de fuerza si hay peso corporal
+      let strengthLevel: 'novice' | 'intermediate' | 'advanced' | 'elite' | undefined;
+      let levelProgress: number | undefined;
+
+      if (bodyWeightKg && bodyWeightKg > 0) {
+        const levelData = determineStrengthLevel(current1RM, bodyWeightKg, metric.exerciseId);
+        strengthLevel = levelData.level;
+        levelProgress = round2(levelData.progress);
+      }
+
       if (!idealRatio) {
         return {
           exercise: metric.exerciseId,
@@ -76,6 +112,8 @@ export function assessMetrics(metrics: StrengthMetrics[]): AssessmentResult[] {
           percentageEfficiency: 0,
           status: 'warning',
           recommendation: 'No existe ratio ideal configurado para este ejercicio.',
+          strengthLevel,
+          levelProgress,
         } satisfies AssessmentResult;
       }
 
@@ -90,9 +128,15 @@ export function assessMetrics(metrics: StrengthMetrics[]): AssessmentResult[] {
         target1RM,
         percentageEfficiency,
         status,
-        recommendation: buildRecommendation(metric.exerciseId, status),
+        recommendation: buildRecommendation(metric.exerciseId, status, strengthLevel),
+        strengthLevel,
+        levelProgress,
       } satisfies AssessmentResult;
     });
 }
 
 export const formatExercise = (exerciseId: ExerciseId): string => EXERCISE_LABELS[exerciseId];
+
+export const formatStrengthLevel = (
+  level: 'novice' | 'intermediate' | 'advanced' | 'elite'
+): string => STRENGTH_LEVEL_LABELS[level];
