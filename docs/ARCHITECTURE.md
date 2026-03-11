@@ -213,3 +213,53 @@ Esto motiva al usuario mostrando cuánto falta para alcanzar el próximo hito.
 - **NSCA Standards** — Certificación de entrenadores
 
 ---
+
+## Ejercicios de Salud Estructural (Accesorios)
+
+### ¿Por qué son importantes?
+
+Además de los 6 ejercicios principales, Athletera incluye **3 ejercicios accesorios** que detectan desequilibrios que pueden llevar a lesiones:
+
+| Ejercicio | Ratio Ideal | Umbral Crítico | Propósito |
+|---|---:|---:|---|
+| **Dips (Fondos)** | 110-120% del Bench | < 100% | Tríceps + hombro inferior |
+| **Press Francés** | ~20% del Bench | < 15% | Aislamiento de tríceps |
+| **Face Pull** | 10% del Bench (15 reps) | < 10 reps | **Resistencia** manguito rotador |
+
+### Dips (Fondos en Paralelas)
+
+**Ratio esperado:** 110-120% del 1RM de Press de Banca (incluyendo peso corporal).
+
+**Si es menor:** Indica debilidad en tríceps o hombro inferior. El atleta puede tener un press de banca fuerte pero no puede transferir esa fuerza a movimientos de empuje vertical.
+
+**Recomendación:** Fondos asistidos, press cerrado, dips excéntricos.
+
+### Press Francés / Extensión de Tríceps
+
+**Ratio esperado:** ~20% del 1RM de Press de Banca para series de 10 reps.
+
+**Si es menor:** El tríceps está limitando el press de banca. Es común que el pecho sea fuerte pero el tríceps falle primero.
+
+**Recomendación:** Press francés, extensiones en polea, press cerrado.
+
+### Face Pull (Test de Resistencia)
+
+**Protocolo:** 15 repeticiones con 10% del 1RM de Press de Banca.
+
+**Manejo especial:** Este ejercicio **NO usa 1RM**. Es un test de **resistencia muscular** para el manguito rotador.
+
+**Si no pasa (CRÍTICO):** 
+- Menos de 15 reps con 10% del bench
+- → **ALERTA DE LESIÓN**: El manguito rotador está débil
+- → Alto riesgo de lesiones de hombro en presses
+
+**Recomendación:** Face pulls diarios, rotaciones externas, trabajo de escapulares.
+
+### Integración en el Análisis Cross-Ejercicio
+
+Los ejercicios accesorios se incluyen en el análisis de desequilibrio **Empuje vs Tracción**:
+
+- **Push:** Bench, Overhead Press, Dips, Tricep Extension
+- **Pull:** Row, Weighted Pull-up, Face Pull
+
+Si hay una diferencia de **≥ 2 niveles** entre push y pull → **ALERTA CRÍTICA DE SALUD ARTICULAR**.

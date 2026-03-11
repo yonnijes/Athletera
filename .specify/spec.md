@@ -49,6 +49,8 @@ Donde $P$ es el peso y $n$ es el número de repeticiones.
 
 ### 3.3 Matriz de Estándares de Fuerza por Nivel
 
+#### Fuerza Principal
+
 | Ejercicio | Novice | Intermediate | Advanced | Elite |
 |---|---:|---:|---:|---:|
 | Press de Banca | 0.8× BW | 1.2× BW | 1.5× BW | 1.8× BW |
@@ -57,6 +59,16 @@ Donde $P$ es el peso y $n$ es el número de repeticiones.
 | Dominadas Lastradas | 0.8× BW | 1.0× BW | 1.2× BW | 1.5× BW |
 | Sentadilla | 0.8× BW | 1.2× BW | 1.6× BW | 2.0× BW |
 | Peso Muerto | 0.96× BW | 1.44× BW | 2.0× BW | 2.4× BW |
+
+#### Salud Estructural (Accesorios)
+
+| Ejercicio | Novice | Intermediate | Advanced | Elite | Propósito |
+|---|---:|---:|---:|---:|---|
+| Dips (Fondos) | 0.88× BW | 1.32× BW | 1.65× BW | 1.98× BW | Tríceps + hombro inferior |
+| Press Francés | 0.16× BW | 0.24× BW | 0.3× BW | 0.36× BW | Aislamiento de tríceps |
+| Face Pull* | 0.08× BW | 0.1× BW | 0.12× BW | 0.15× BW | **Resistencia** manguito rotador |
+
+*Face Pull usa test de resistencia: 15 reps con 10% del 1RM de Banca.
 
 ### 3.4 Lógica de Clasificación de Niveles
 
