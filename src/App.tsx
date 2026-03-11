@@ -2,6 +2,8 @@ import { AthleteProfileForm } from './components/AthleteProfileForm';
 import { ExerciseForm } from './components/ExerciseForm';
 import { RadarChart } from './components/RadarChart';
 import { ResultsSummary } from './components/ResultsSummary';
+import { DiagnosticCard } from './components/DiagnosticCard';
+import { ViewModeToggle } from './components/ViewModeToggle';
 import { EXERCISE_LABELS } from './constants/ratios';
 import { useStrengthLogic } from './hooks/useStrengthLogic';
 import type { ExerciseId } from './types/domain';
@@ -18,10 +20,17 @@ export default function App() {
     results,
     errors,
     pivot1RM,
+    viewMode,
+    targetLevel,
+    ghostProfile,
+    crossExerciseAlerts,
+    diagnosticCard,
     updateProfile,
     updateMetric,
     addMetric,
     removeMetric,
+    setViewMode,
+    setTargetLevel,
   } = useStrengthLogic();
 
   const availableExercises = EXERCISES.filter((e) => !metrics.some((m) => m.exerciseId === e.id));
@@ -38,6 +47,18 @@ export default function App() {
           </p>
         )}
       </header>
+
+      {/* Tarjeta de Diagnóstico Narrativo (PRIORITARIA) */}
+      {diagnosticCard && <DiagnosticCard diagnostic={diagnosticCard} />}
+
+      {/* Selector de Modo (Simple/Comparativo) */}
+      <ViewModeToggle
+        viewMode={viewMode}
+        targetLevel={targetLevel}
+        hasBodyWeight={!!profile.bodyWeightKg}
+        onViewModeChange={setViewMode}
+        onTargetLevelChange={setTargetLevel}
+      />
 
       <AthleteProfileForm profile={profile} onChange={updateProfile} />
 
@@ -68,8 +89,15 @@ export default function App() {
       )}
 
       <section className="rounded-xl border p-4 bg-white space-y-3" aria-labelledby="radar-title">
-        <h2 id="radar-title" className="font-semibold">Comparativa Ideal vs Actual</h2>
-        <RadarChart results={results} />
+        <h2 id="radar-title" className="font-semibold">
+          Comparativa Ideal vs Actual
+          {viewMode === 'comparative' && (
+            <span className="ml-2 text-xs font-normal text-purple-600">
+              (incluye tu meta: {targetLevel})
+            </span>
+          )}
+        </h2>
+        <RadarChart results={results} ghostProfile={ghostProfile} />
       </section>
 
       <section className="rounded-xl border p-4 bg-white space-y-2" aria-labelledby="results-title">
