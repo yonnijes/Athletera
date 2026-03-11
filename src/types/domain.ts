@@ -3,6 +3,12 @@ export type AthleteLevel = 'beginner' | 'intermediate' | 'advanced';
 
 export type StrengthLevel = 'novice' | 'intermediate' | 'advanced' | 'elite';
 
+/**
+ * Unified level type that accepts both Level (beginner/intermediate/advanced)
+ * and StrengthLevel (novice/intermediate/advanced/elite)
+ */
+export type AnyLevel = 'beginner' | 'novice' | 'intermediate' | 'advanced' | 'elite';
+
 export type MovementPattern = 'push_horizontal' | 'push_vertical' | 'pull_horizontal' | 'pull_vertical' | 'squat' | 'hinge';
 
 export interface AthleteProfile {
@@ -37,7 +43,7 @@ export interface AssessmentResult {
   percentageEfficiency: number;
   status: AssessmentStatus;
   recommendation: string;
-  strengthLevel?: StrengthLevel;
+  strengthLevel?: AnyLevel;
   levelProgress?: number;
   relativeRatio?: number; // 1RM / bodyWeight
   movementPattern?: MovementPattern;
@@ -61,8 +67,8 @@ export interface CrossExerciseAlert {
   severity: 'critical' | 'warning';
   pushExercise: ExerciseId;
   pullExercise: ExerciseId;
-  pushLevel: StrengthLevel;
-  pullLevel: StrengthLevel;
+  pushLevel: AnyLevel;
+  pullLevel: AnyLevel;
   levelDifference: number;
   message: string;
 }

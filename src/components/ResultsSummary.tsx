@@ -1,6 +1,6 @@
-import type { AssessmentResult, CrossExerciseAlert } from '../types/domain';
+import type { AssessmentResult, CrossExerciseAlert, AnyLevel } from '../types/domain';
 import { formatExercise, detectCrossExerciseImbalance } from '../utils/calculators';
-import { STRENGTH_LEVEL_LABELS, STRENGTH_LEVEL_COLORS } from '../constants/strengthStandards';
+import { LEVEL_LABELS, LEVEL_COLORS } from '../constants/ratios';
 
 interface ResultsSummaryProps {
   results: AssessmentResult[];
@@ -38,7 +38,8 @@ export function ResultsSummary({ results, bodyWeightKg }: ResultsSummaryProps) {
 
   const getNextLevel = (level: AssessmentResult['strengthLevel']) => {
     if (!level) return null;
-    const next: Record<typeof level, string | null> = {
+    const next: Record<AnyLevel, string | null> = {
+      beginner: 'Intermedio',
       novice: 'Intermedio',
       intermediate: 'Avanzado',
       advanced: 'Élite',
@@ -81,8 +82,8 @@ export function ResultsSummary({ results, bodyWeightKg }: ResultsSummaryProps) {
               <p className="font-medium">{formatExercise(r.exercise)}</p>
               <div className="flex items-center gap-2 flex-wrap">
                 {r.strengthLevel && (
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STRENGTH_LEVEL_COLORS[r.strengthLevel]}`}>
-                    {STRENGTH_LEVEL_LABELS[r.strengthLevel]}
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${LEVEL_COLORS[r.strengthLevel]}`}>
+                    {LEVEL_LABELS[r.strengthLevel]}
                   </span>
                 )}
                 <span

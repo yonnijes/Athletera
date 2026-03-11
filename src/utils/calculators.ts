@@ -3,11 +3,14 @@ import {
   EXERCISE_LABELS,
   IDEAL_RATIO_RANGES,
   PIVOT_EXERCISE,
+  BW_STANDARDS,
+  LEVEL_LABELS,
+  SCAPULAR_IMBALANCE_THRESHOLD,
+  type Level,
+  type RatioRange,
 } from '../constants/ratios';
 import {
   STRENGTH_STANDARDS,
-  determineStrengthLevel,
-  STRENGTH_LEVEL_LABELS,
   PUSH_EXERCISES,
   PULL_EXERCISES,
   ENDURANCE_EXERCISES,
@@ -19,28 +22,15 @@ import type {
   StrengthLevel,
   CrossExerciseAlert,
   MovementPattern,
+  AnyLevel,
 } from '../types/domain';
 
 const round2 = (n: number): number => Math.round(n * 100) / 100;
 
 /**
- * Evalúa el test de resistencia para Face Pulls
- * Devuelve el 1RM "equivalente" basado en poder hacer 15 reps con X% del bench
+ * Fórmula de Epley para estimar 1RM
+ * 1RM = peso × (1 + reps / 30)
  */
-export function evaluateEnduranceTest(
-  weightKg: number,
-  reps: number,
-  bench1RM: number,
-  targetReps: number = 15,
-  targetPercentage: number = 0.1
-): { passed: boolean; actualPercentage: number; equivalent1RM: number } {
-  const actualPercentage = weightKg / bench1RM;
-  const passed = reps >= targetReps && actualPercentage >= targetPercentage;
-  // Convertir a 1RM equivalente usando Epley inverso
-  const equivalent1RM = estimate1RM(weightKg, reps);
-  return { passed, actualPercentage: round2(actualPercentage), equivalent1RM };
-}
-
 export function estimate1RM(weightKg: number, reps: number): number {
   if (!Number.isFinite(weightKg) || !Number.isFinite(reps)) {
     throw new Error('weightKg y reps deben ser números finitos.');
@@ -51,9 +41,76 @@ export function estimate1RM(weightKg: number, reps: number): number {
   return round2(weightKg * (1 + reps / 30));
 }
 
+/**
+ * Calcula la fuerza relativa (1RM / peso corporal)
+ */
+export function calculateRelativeStrength(oneRM: number, bodyWeightKg: number): number {
+  if (bodyWeightKg <= 0) throw new Error('bodyWeightKg debe ser mayor que 0.');
+  return round2(oneRM / bodyWeightKg);
+}
+
+/**
+ * Determina el nivel actual basado en la fuerza relativa
+ * Compara contra la matriz BW_STANDARDS
+ */
+export function determineCurrentLevel(
+  relativeStrength: number,
+  exerciseId: ExerciseId
+): { level: AnyLevel; progress: number } {
+  const standard = BW_STANDARDS[exerciseId];
+  if (!standard) {
+    return { level: 'beginner', progress: 0 };
+  }
+
+  // Determinar nivel basado en umbrales
+  if (relativeStrength >= standard.advanced) {
+    const progress = Math.min(100, ((relativeStrength - standard.advanced) / standard.advanced) * 100);
+    return { level: 'advanced', progress: round2(progress) };
+  }
+  if (relativeStrength >= standard.intermediate) {
+    const progress = ((relativeStrength - standard.intermediate) / (standard.advanced - standard.intermediate)) * 100;
+    return { level: 'intermediate', progress: round2(progress) };
+  }
+  if (relativeStrength >= standard.beginner) {
+    const progress = ((relativeStrength - standard.beginner) / (standard.intermediate - standard.beginner)) * 100;
+    return { level: 'beginner', progress: round2(progress) };
+  }
+
+  // Por debajo de beginner
+  const progress = (relativeStrength / standard.beginner) * 100;
+  return { level: 'beginner', progress: round2(progress) };
+}
+
+/**
+ * Calcula el 1RM objetivo para un nivel dado
+ */
+export function calculateTarget1RM(
+  bodyWeightKg: number,
+  exerciseId: ExerciseId,
+  targetLevel: AnyLevel
+): number {
+  const standard = BW_STANDARDS[exerciseId];
+  if (!standard) return 0;
+
+  let multiplier: number;
+  switch (targetLevel) {
+    case 'advanced':
+    case 'elite':
+      multiplier = standard.advanced;
+      break;
+    case 'intermediate':
+      multiplier = standard.intermediate;
+      break;
+    default:
+      multiplier = standard.beginner;
+  }
+
+  return round2(bodyWeightKg * multiplier);
+}
+
 export function computeCurrentRatio(current1RM: number, pivot1RM: number): number {
   if (pivot1RM <= 0) throw new Error('pivot1RM debe ser mayor que 0.');
-  return current1RM / pivot1RM;
+  return round2(current1RM / pivot1RM);
 }
 
 export function getMidIdealRatio(exerciseId: ExerciseId): number | null {
@@ -64,7 +121,7 @@ export function getMidIdealRatio(exerciseId: ExerciseId): number | null {
 
 export function computeDeviationPct(actualRatio: number, idealRatio: number): number {
   if (idealRatio <= 0) throw new Error('idealRatio debe ser mayor que 0.');
-  return ((actualRatio - idealRatio) / idealRatio) * 100;
+  return round2(((actualRatio - idealRatio) / idealRatio) * 100);
 }
 
 export function classifyStatus(deviationPct: number): 'optimal' | 'warning' | 'critical' {
@@ -73,21 +130,40 @@ export function classifyStatus(deviationPct: number): 'optimal' | 'warning' | 'c
   return 'optimal';
 }
 
+/**
+ * Evalúa el test de resistencia para Face Pulls
+ */
+export function evaluateEnduranceTest(
+  weightKg: number,
+  reps: number,
+  bench1RM: number,
+  targetReps: number = 15,
+  targetPercentage: number = 0.1
+): { passed: boolean; actualPercentage: number; equivalent1RM: number } {
+  const actualPercentage = weightKg / bench1RM;
+  const passed = reps >= targetReps && actualPercentage >= targetPercentage;
+  const equivalent1RM = estimate1RM(weightKg, reps);
+  return { passed, actualPercentage: round2(actualPercentage), equivalent1RM };
+}
+
 export function buildRecommendation(
   exerciseId: ExerciseId,
   status: 'optimal' | 'warning' | 'critical',
-  strengthLevel?: 'novice' | 'intermediate' | 'advanced' | 'elite'
+  strengthLevel?: AnyLevel
 ): string {
   if (status === 'optimal') {
-    if (strengthLevel === 'elite') return '¡Nivel élite! Considera competir o especializarte.';
-    if (strengthLevel === 'advanced') return 'Nivel avanzado. Mantener progresión y técnica.';
+    if (strengthLevel === 'elite' || strengthLevel === 'advanced') {
+      return '¡Nivel avanzado/élite! Considera competir o especializarte.';
+    }
     return 'Mantener progresión y técnica actual.';
   }
 
-  const levelAdvice: Partial<Record<'novice' | 'intermediate' | 'advanced' | 'elite', string>> = {
+  const levelAdvice: Record<AnyLevel, string> = {
+    beginner: 'Enfocarse en técnica y consistencia antes de aumentar carga.',
     novice: 'Enfocarse en técnica y consistencia antes de aumentar carga.',
     intermediate: 'Priorizar sobrecarga progresiva en este patrón.',
     advanced: 'Revisar periodización y recuperación específica.',
+    elite: 'Mantener picos de fuerza y prevenir sobreentrenamiento.',
   };
 
   const exerciseAdvice: Partial<Record<ExerciseId, string>> = {
@@ -101,7 +177,7 @@ export function buildRecommendation(
     face_pull: 'CRÍTICO: Mejorar resistencia del manguito rotador para prevenir lesiones de hombro.',
   };
 
-  const levelTip = levelAdvice[strengthLevel || 'novice'] || 'Incrementar volumen específico.';
+  const levelTip = levelAdvice[strengthLevel || 'beginner'];
   const exerciseTip = exerciseAdvice[exerciseId];
 
   return exerciseTip ? `${levelTip} ${exerciseTip}` : levelTip;
@@ -110,8 +186,9 @@ export function buildRecommendation(
 /**
  * Calcula el nivel numérico para comparar diferencias entre niveles
  */
-function strengthLevelToNumber(level: StrengthLevel): number {
+function strengthLevelToNumber(level: AnyLevel): number {
   switch (level) {
+    case 'beginner':
     case 'novice': return 0;
     case 'intermediate': return 1;
     case 'advanced': return 2;
@@ -121,19 +198,18 @@ function strengthLevelToNumber(level: StrengthLevel): number {
 
 /**
  * Detecta desequilibrios críticos entre ejercicios de empuje y tracción
+ * ALERTA CRÍTICA si la diferencia es >= 2 niveles
  */
 export function detectCrossExerciseImbalance(
   results: AssessmentResult[]
 ): CrossExerciseAlert[] {
   const alerts: CrossExerciseAlert[] = [];
 
-  // Obtener ejercicios de empuje y tracción con sus niveles
   const pushResults = results.filter((r) =>
     PUSH_EXERCISES.includes(r.exercise) || r.exercise === PIVOT_EXERCISE
   );
   const pullResults = results.filter((r) => PULL_EXERCISES.includes(r.exercise));
 
-  // Comparar cada par push-pull
   for (const push of pushResults) {
     for (const pull of pullResults) {
       if (!push.strengthLevel || !pull.strengthLevel) continue;
@@ -152,7 +228,7 @@ export function detectCrossExerciseImbalance(
           pushLevel: push.strengthLevel,
           pullLevel: pull.strengthLevel,
           levelDifference,
-          message: `⚠️ ALERTA CRÍTICA: Desequilibrio peligroso entre ${formatExercise(push.exercise)} (${STRENGTH_LEVEL_LABELS[push.strengthLevel]}) y ${formatExercise(pull.exercise)} (${STRENGTH_LEVEL_LABELS[pull.strengthLevel]}). Riesgo de lesión de hombro. Priorizar tracción.`,
+          message: `🚨 ALERTA CRÍTICA: Desequilibrio peligroso entre ${formatExercise(push.exercise)} (${LEVEL_LABELS[push.strengthLevel]}) y ${formatExercise(pull.exercise)} (${LEVEL_LABELS[pull.strengthLevel]}). Riesgo de lesión de hombro. Priorizar tracción.`,
         });
       } else if (levelDifference === 1) {
         alerts.push({
@@ -170,6 +246,23 @@ export function detectCrossExerciseImbalance(
   }
 
   return alerts;
+}
+
+/**
+ * Detecta riesgo de desequilibrio escapular
+ * Si el ratio de tracción es 20% menor que el de empuje → ALERTA
+ */
+export function detectScapularImbalance(
+  push1RM: number,
+  pull1RM: number
+): { hasImbalance: boolean; deviation: number } {
+  const ratio = pull1RM / push1RM;
+  const deviation = round2((ratio - 1) * 100); // Porcentaje de diferencia
+  
+  // Si pull es 20% menor que push → deviation <= -20
+  const hasImbalance = deviation <= SCAPULAR_IMBALANCE_THRESHOLD;
+  
+  return { hasImbalance, deviation };
 }
 
 export function assessMetrics(
@@ -192,17 +285,15 @@ export function assessMetrics(
       let recommendationOverride: string | undefined;
 
       if (ENDURANCE_EXERCISES.includes(metric.exerciseId)) {
-        // Para face_pull, evaluamos el test de resistencia
         const enduranceResult = evaluateEnduranceTest(
           metric.weightKg,
           metric.reps,
           pivot1RM,
-          15, // target reps
-          0.1 // 10% del bench
+          15,
+          0.1
         );
         current1RM = enduranceResult.equivalent1RM;
         
-        // Si no pasa el test de resistencia, marcar como crítico
         if (!enduranceResult.passed) {
           statusOverride = 'critical';
           recommendationOverride = `CRÍTICO: No completaste 15 reps con ${metric.weightKg} kg (${(enduranceResult.actualPercentage * 100).toFixed(0)}% del bench). El manguito rotador necesita trabajo de resistencia urgente para prevenir lesiones.`;
@@ -215,15 +306,15 @@ export function assessMetrics(
       const idealRatio = getMidIdealRatio(metric.exerciseId);
 
       // Calcular nivel de fuerza si hay peso corporal
-      let strengthLevel: 'novice' | 'intermediate' | 'advanced' | 'elite' | undefined;
+      let strengthLevel: Level | StrengthLevel | undefined;
       let levelProgress: number | undefined;
       let relativeRatio: number | undefined;
 
       if (bodyWeightKg && bodyWeightKg > 0) {
-        const levelData = determineStrengthLevel(current1RM, bodyWeightKg, metric.exerciseId);
+        relativeRatio = calculateRelativeStrength(current1RM, bodyWeightKg);
+        const levelData = determineCurrentLevel(relativeRatio, metric.exerciseId);
         strengthLevel = levelData.level;
-        levelProgress = round2(levelData.progress);
-        relativeRatio = round2(current1RM / bodyWeightKg);
+        levelProgress = levelData.progress;
       }
 
       const movementPattern = STRENGTH_STANDARDS[metric.exerciseId]?.movementPattern;
@@ -266,6 +357,4 @@ export function assessMetrics(
 
 export const formatExercise = (exerciseId: ExerciseId): string => EXERCISE_LABELS[exerciseId];
 
-export const formatStrengthLevel = (
-  level: 'novice' | 'intermediate' | 'advanced' | 'elite'
-): string => STRENGTH_LEVEL_LABELS[level];
+export const formatLevel = (level: AnyLevel): string => LEVEL_LABELS[level];
