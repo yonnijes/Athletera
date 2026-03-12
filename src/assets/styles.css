@@ -12,3 +12,8 @@ body {
   background: #f8fafc;
   color: #0f172a;
 }
+
+.app-container {
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}

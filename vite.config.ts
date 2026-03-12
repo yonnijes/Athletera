@@ -15,6 +15,8 @@ export default defineConfig({
         theme_color: '#0ea5e9',
         background_color: '#0f172a',
         display: 'standalone',
+        orientation: 'portrait',
+        display_override: ['window-controls-overlay'],
         start_url: '/',
         scope: '/',
         icons: [
@@ -22,11 +24,13 @@ export default defineConfig({
             src: '/icon-192x192.png',
             sizes: '192x192',
             type: 'image/png',
+            purpose: 'any maskable',
           },
           {
             src: '/icon-512x512.png',
             sizes: '512x512',
             type: 'image/png',
+            purpose: 'any maskable',
           },
         ],
       },

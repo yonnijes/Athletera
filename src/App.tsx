@@ -36,8 +36,8 @@ export default function App() {
   const availableExercises = EXERCISES.filter((e) => !metrics.some((m) => m.exerciseId === e.id));
 
   return (
-    <main className="mx-auto max-w-md p-4 space-y-4 bg-slate-50 min-h-screen" role="main">
-      <header className="space-y-1">
+    <main className="app-container mx-auto max-w-md p-4 space-y-4 bg-slate-50 min-h-screen" role="main">
+      <header className="space-y-1 pt-8">
         <h1 className="text-2xl font-bold">Athletera MVP</h1>
         <p className="text-sm text-slate-600">Evaluador de balance muscular basado en 1RM (Epley).</p>
         <p className="text-xs text-slate-500">Pivot obligatorio: Press de Banca.</p>

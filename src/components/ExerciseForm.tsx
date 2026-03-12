@@ -85,7 +85,7 @@ export function ExerciseForm({ metrics, availableExercises, onChange, onAdd, onR
                       role="radio"
                       aria-checked={(metric.implement ?? 'barbell') === 'barbell'}
                       onClick={() => onChange(metric.exerciseId, 'implement', 'barbell')}
-                      className={`px-2 py-1 rounded-md text-xs font-medium border transition-all ${
+                      className={`min-h-[44px] px-3 py-2 rounded-md text-xs font-medium border transition-all ${
                         (metric.implement ?? 'barbell') === 'barbell'
                           ? 'bg-slate-800 text-white border-slate-800'
                           : 'bg-white text-slate-600 border-slate-300'
@@ -98,7 +98,7 @@ export function ExerciseForm({ metrics, availableExercises, onChange, onAdd, onR
                       role="radio"
                       aria-checked={metric.implement === 'dumbbell'}
                       onClick={() => onChange(metric.exerciseId, 'implement', 'dumbbell')}
-                      className={`px-2 py-1 rounded-md text-xs font-medium border transition-all ${
+                      className={`min-h-[44px] px-3 py-2 rounded-md text-xs font-medium border transition-all ${
                         metric.implement === 'dumbbell'
                           ? 'bg-slate-800 text-white border-slate-800'
                           : 'bg-white text-slate-600 border-slate-300'
