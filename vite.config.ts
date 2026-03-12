@@ -1,6 +1,35 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['icon-192x192.png', 'icon-512x512.png'],
+      manifest: {
+        name: 'Athletera',
+        short_name: 'Athletera',
+        description: 'Evaluador de balance muscular para atletas basado en 1RM',
+        theme_color: '#0ea5e9',
+        background_color: '#0f172a',
+        display: 'standalone',
+        start_url: '/',
+        scope: '/',
+        icons: [
+          {
+            src: '/icon-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+          {
+            src: '/icon-512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+          },
+        ],
+      },
+    }),
+  ],
 });

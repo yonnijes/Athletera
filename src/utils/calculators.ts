@@ -35,6 +35,20 @@ const round2 = (n: number): number => Math.round(n * 100) / 100;
 const BODYWEIGHT_EXERCISES: ExerciseId[] = ['weighted_pull_up', 'dips'];
 
 /**
+ * Ajustes para mancuernas: si el usuario ingresa el peso por lado
+ * Multiplicamos x2 y aplicamos un -10% de corrección por estabilidad.
+ */
+const DUMBBELL_MULTIPLIER = 2;
+const DUMBBELL_CORRECTION = 0.9;
+
+function applyImplementAdjustment(weightKg: number, implement: 'barbell' | 'dumbbell' | undefined): number {
+  if (implement === 'dumbbell') {
+    return round2(weightKg * DUMBBELL_MULTIPLIER * DUMBBELL_CORRECTION);
+  }
+  return weightKg;
+}
+
+/**
  * Fórmula de Epley para estimar 1RM
  * 1RM = peso × (1 + reps / 30)
  * 
@@ -313,7 +327,8 @@ export function assessMetrics(
         const totalWeight = bodyWeightKg + metric.weightKg;
         current1RM = estimate1RM(totalWeight, metric.reps);
       } else {
-        current1RM = estimate1RM(metric.weightKg, metric.reps);
+        const adjustedWeight = applyImplementAdjustment(metric.weightKg, metric.implement);
+        current1RM = estimate1RM(adjustedWeight, metric.reps);
       }
 
       const actualRatio = computeCurrentRatio(current1RM, pivot1RM);

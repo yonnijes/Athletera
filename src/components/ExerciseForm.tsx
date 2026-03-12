@@ -7,16 +7,35 @@ import { formatExercise } from '../utils/calculators';
 const BODYWEIGHT_EXERCISES: ExerciseId[] = ['weighted_pull_up', 'dips'];
 
 /**
+ * Ejercicios donde aplica el selector de implemento (barra vs mancuerna)
+ */
+const IMPLEMENT_EXERCISES: ExerciseId[] = [
+  'bench_press',
+  'overhead_press',
+  'barbell_row',
+  'squat',
+  'deadlift',
+  'tricep_extension',
+];
+
+/**
  * Verifica si un ejercicio es de autocarga
  */
 function isBodyweightExercise(exerciseId: ExerciseId): boolean {
   return BODYWEIGHT_EXERCISES.includes(exerciseId);
 }
 
+/**
+ * Verifica si un ejercicio admite selector de implemento
+ */
+function hasImplementToggle(exerciseId: ExerciseId): boolean {
+  return IMPLEMENT_EXERCISES.includes(exerciseId);
+}
+
 interface ExerciseFormProps {
   metrics: StrengthMetrics[];
   availableExercises: { id: ExerciseId; label: string }[];
-  onChange: (exerciseId: ExerciseId, field: 'weightKg' | 'reps', value: number) => void;
+  onChange: (exerciseId: ExerciseId, field: 'weightKg' | 'reps' | 'implement', value: number | string) => void;
   onAdd: (exerciseId: ExerciseId) => void;
   onRemove: (exerciseId: ExerciseId) => void;
 }
@@ -57,6 +76,45 @@ export function ExerciseForm({ metrics, availableExercises, onChange, onAdd, onR
                 )}
               </div>
 
+              {hasImplementToggle(metric.exerciseId) && !isBodyweightExercise(metric.exerciseId) && (
+                <div className="mb-3">
+                  <div className="flex items-center gap-2" role="radiogroup" aria-label="Implemento">
+                    <span className="text-xs text-slate-600">Implemento:</span>
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={(metric.implement ?? 'barbell') === 'barbell'}
+                      onClick={() => onChange(metric.exerciseId, 'implement', 'barbell')}
+                      className={`px-2 py-1 rounded-md text-xs font-medium border transition-all ${
+                        (metric.implement ?? 'barbell') === 'barbell'
+                          ? 'bg-slate-800 text-white border-slate-800'
+                          : 'bg-white text-slate-600 border-slate-300'
+                      }`}
+                    >
+                      Barra
+                    </button>
+                    <button
+                      type="button"
+                      role="radio"
+                      aria-checked={metric.implement === 'dumbbell'}
+                      onClick={() => onChange(metric.exerciseId, 'implement', 'dumbbell')}
+                      className={`px-2 py-1 rounded-md text-xs font-medium border transition-all ${
+                        metric.implement === 'dumbbell'
+                          ? 'bg-slate-800 text-white border-slate-800'
+                          : 'bg-white text-slate-600 border-slate-300'
+                      }`}
+                    >
+                      Mancuerna
+                    </button>
+                  </div>
+                  {metric.implement === 'dumbbell' && (
+                    <p className="text-[11px] text-slate-500 mt-1">
+                      Ingresa el peso por mancuerna (por lado). Se multiplica ×2 y se aplica -10% por estabilidad.
+                    </p>
+                  )}
+                </div>
+              )}
+
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label htmlFor={weightId} className="text-xs text-slate-600">
@@ -65,9 +123,11 @@ export function ExerciseForm({ metrics, availableExercises, onChange, onAdd, onR
                   <input
                     id={weightId}
                     type="number"
+                    inputMode="decimal"
+                    pattern="[0-9]*"
                     min={1}
                     max={500}
-                    className={`mt-1 w-full rounded-lg border p-2 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none ${
+                    className={`mt-1 w-full rounded-lg border p-4 text-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none ${
                       invalidWeight ? 'border-red-500' : ''
                     }`}
                     value={metric.weightKg}
@@ -94,9 +154,11 @@ export function ExerciseForm({ metrics, availableExercises, onChange, onAdd, onR
                   <input
                     id={repsId}
                     type="number"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
                     min={1}
                     max={100}
-                    className={`mt-1 w-full rounded-lg border p-2 focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none ${
+                    className={`mt-1 w-full rounded-lg border p-4 text-xl focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none ${
                       invalidReps ? 'border-red-500' : ''
                     }`}
                     value={metric.reps}

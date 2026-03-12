@@ -61,7 +61,7 @@ export interface UseStrengthLogicResult {
   
   // Acciones
   updateProfile: (next: AthleteProfile) => void;
-  updateMetric: (exerciseId: ExerciseId, field: 'weightKg' | 'reps', value: number) => void;
+  updateMetric: (exerciseId: ExerciseId, field: 'weightKg' | 'reps' | 'implement', value: number | string) => void;
   addMetric: (exerciseId: ExerciseId) => void;
   removeMetric: (exerciseId: ExerciseId) => void;
 }
@@ -81,19 +81,23 @@ const DEFAULT_PROFILE: AthleteProfile = {
 };
 
 const DEFAULT_METRICS: StrengthMetrics[] = [
-  { exerciseId: 'bench_press', weightKg: 80, reps: 8 },
-  { exerciseId: 'overhead_press', weightKg: 45, reps: 6 },
+  { exerciseId: 'bench_press', weightKg: 80, reps: 8, implement: 'barbell' },
+  { exerciseId: 'overhead_press', weightKg: 45, reps: 6, implement: 'barbell' },
 ];
 
 const isStrengthMetric = (value: unknown): value is StrengthMetrics => {
   if (!value || typeof value !== 'object') return false;
   const maybe = value as Partial<StrengthMetrics>;
+  const implementValid =
+    maybe.implement === undefined || maybe.implement === 'barbell' || maybe.implement === 'dumbbell';
+
   return (
     typeof maybe.exerciseId === 'string' &&
     typeof maybe.weightKg === 'number' &&
     Number.isFinite(maybe.weightKg) &&
     typeof maybe.reps === 'number' &&
-    Number.isFinite(maybe.reps)
+    Number.isFinite(maybe.reps) &&
+    implementValid
   );
 };
 
@@ -122,7 +126,10 @@ const loadStoredState = (): PersistedState => {
             ? profile.bodyWeightKg
             : undefined,
       },
-      metrics: metrics.length > 0 ? metrics : DEFAULT_METRICS,
+      metrics: (metrics.length > 0 ? metrics : DEFAULT_METRICS).map((metric) => ({
+        ...metric,
+        implement: metric.implement ?? 'barbell',
+      })),
       viewMode: parsed.viewMode === 'comparative' ? 'comparative' : 'simple',
       targetLevel: (parsed.targetLevel as AnyLevel) ?? 'intermediate',
     };
@@ -348,14 +355,27 @@ export function useStrengthLogic(): UseStrengthLogicResult {
     return generateDiagnosticCard(results, crossExerciseAlerts, pivot1RM, profile.bodyWeightKg);
   }, [results, crossExerciseAlerts, pivot1RM, profile.bodyWeightKg]);
 
-  const updateMetric = (exerciseId: ExerciseId, field: 'weightKg' | 'reps', value: number) => {
-    setMetrics((prev) => prev.map((m) => (m.exerciseId === exerciseId ? { ...m, [field]: value } : m)));
+  const updateMetric = (
+    exerciseId: ExerciseId,
+    field: 'weightKg' | 'reps' | 'implement',
+    value: number | string
+  ) => {
+    setMetrics((prev) =>
+      prev.map((m) =>
+        m.exerciseId === exerciseId
+          ? {
+              ...m,
+              [field]: field === 'implement' ? (value as 'barbell' | 'dumbbell') : Number(value),
+            }
+          : m
+      )
+    );
   };
 
   const addMetric = (exerciseId: ExerciseId) => {
     setMetrics((prev) => {
       if (prev.some((m) => m.exerciseId === exerciseId)) return prev;
-      return [...prev, { exerciseId, weightKg: 1, reps: 1 }];
+      return [...prev, { exerciseId, weightKg: 1, reps: 1, implement: 'barbell' }];
     });
   };
 

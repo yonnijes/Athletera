@@ -28,10 +28,13 @@ export type ExerciseId =
   | 'tricep_extension'
   | 'face_pull';
 
+export type ImplementType = 'barbell' | 'dumbbell';
+
 export interface StrengthMetrics {
   exerciseId: ExerciseId;
   weightKg: number;
   reps: number;
+  implement?: ImplementType; // Barra o Mancuerna (si aplica)
 }
 
 export type AssessmentStatus = 'optimal' | 'warning' | 'critical';

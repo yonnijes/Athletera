@@ -248,4 +248,20 @@ describe('assessMetrics', () => {
     expect(result.exercise).toBe('overhead_press');
     expect(result.current1RM).toBe(63.33); // 50kg × (1 + 8/30), NO incluye bodyWeight
   });
+
+  it('ajusta el 1RM para mancuernas (peso por lado ×2 con -10%)', () => {
+    // Press militar con mancuernas: 20kg por lado × 8 reps
+    // Peso total = 20×2 = 40kg
+    // Corrección -10% → 36kg efectivos
+    // 1RM = 36 × (1 + 8/30) = 36 × 1.2667 = 45.6kg
+    const results = assessMetrics([
+      { exerciseId: 'bench_press', weightKg: 100, reps: 10 },
+      { exerciseId: 'overhead_press', weightKg: 20, reps: 8, implement: 'dumbbell' },
+    ]);
+
+    expect(results).toHaveLength(1);
+    const result = results[0]!;
+    expect(result.exercise).toBe('overhead_press');
+    expect(result.current1RM).toBe(45.6);
+  });
 });
