@@ -28,8 +28,17 @@ import type {
 const round2 = (n: number): number => Math.round(n * 100) / 100;
 
 /**
+ * Ejercicios de autocarga donde el 1RM real = peso corporal + lastre
+ * En biomecánica, para dominadas y fondos, el lastre es adicional al peso corporal.
+ * No es lo mismo lastrar 10kg pesando 60kg (70kg total) que pesando 90kg (100kg total).
+ */
+const BODYWEIGHT_EXERCISES: ExerciseId[] = ['weighted_pull_up', 'dips'];
+
+/**
  * Fórmula de Epley para estimar 1RM
  * 1RM = peso × (1 + reps / 30)
+ * 
+ * Para ejercicios de autocarga (dominadas, dips), el peso debe incluir el peso corporal.
  */
 export function estimate1RM(weightKg: number, reps: number): number {
   if (!Number.isFinite(weightKg) || !Number.isFinite(reps)) {
@@ -298,6 +307,11 @@ export function assessMetrics(
           statusOverride = 'critical';
           recommendationOverride = `CRÍTICO: No completaste 15 reps con ${metric.weightKg} kg (${(enduranceResult.actualPercentage * 100).toFixed(0)}% del bench). El manguito rotador necesita trabajo de resistencia urgente para prevenir lesiones.`;
         }
+      } else if (BODYWEIGHT_EXERCISES.includes(metric.exerciseId) && bodyWeightKg && bodyWeightKg > 0) {
+        // Ejercicios de autocarga: el 1RM real = peso corporal + lastre
+        // No es lo mismo lastrar 10kg pesando 60kg (70kg total) que pesando 90kg (100kg total)
+        const totalWeight = bodyWeightKg + metric.weightKg;
+        current1RM = estimate1RM(totalWeight, metric.reps);
       } else {
         current1RM = estimate1RM(metric.weightKg, metric.reps);
       }

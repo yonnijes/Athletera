@@ -1,6 +1,18 @@
 import type { ExerciseId, StrengthMetrics } from '../types/domain';
 import { formatExercise } from '../utils/calculators';
 
+/**
+ * Ejercicios de autocarga donde el peso mostrado es el lastre (no incluye peso corporal)
+ */
+const BODYWEIGHT_EXERCISES: ExerciseId[] = ['weighted_pull_up', 'dips'];
+
+/**
+ * Verifica si un ejercicio es de autocarga
+ */
+function isBodyweightExercise(exerciseId: ExerciseId): boolean {
+  return BODYWEIGHT_EXERCISES.includes(exerciseId);
+}
+
 interface ExerciseFormProps {
   metrics: StrengthMetrics[];
   availableExercises: { id: ExerciseId; label: string }[];
@@ -48,7 +60,12 @@ export function ExerciseForm({ metrics, availableExercises, onChange, onAdd, onR
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label htmlFor={weightId} className="text-xs text-slate-600">
-                    Peso (kg)
+                    {isBodyweightExercise(metric.exerciseId) ? 'Lastre (kg)' : 'Peso (kg)'}
+                    {isBodyweightExercise(metric.exerciseId) && (
+                      <span className="block text-[10px] text-amber-600 mt-0.5">
+                        💡 Se suma tu peso corporal automáticamente
+                      </span>
+                    )}
                   </label>
                   <input
                     id={weightId}

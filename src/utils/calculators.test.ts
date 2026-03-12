@@ -192,4 +192,60 @@ describe('assessMetrics', () => {
 
     expect(results[0]!.status).toBe('critical');
   });
+
+  it('calcula 1RM correctamente para ejercicios de autocarga (weighted_pull_up con bodyWeight)', () => {
+    // Usuario de 75kg hace dominadas con 25kg de lastre x 5 reps
+    // Peso total = 75 + 25 = 100kg
+    // 1RM = 100 × (1 + 5/30) = 100 × 1.167 = 116.67kg
+    const results = assessMetrics([
+      { exerciseId: 'bench_press', weightKg: 100, reps: 10 },
+      { exerciseId: 'weighted_pull_up', weightKg: 25, reps: 5 },
+    ], 75); // bodyWeightKg = 75
+
+    expect(results).toHaveLength(1);
+    const result = results[0]!;
+    expect(result.exercise).toBe('weighted_pull_up');
+    expect(result.current1RM).toBe(116.67); // 100kg total × (1 + 5/30)
+  });
+
+  it('calcula 1RM correctamente para dips con bodyWeight', () => {
+    // Usuario de 80kg hace dips con 20kg de lastre x 8 reps
+    // Peso total = 80 + 20 = 100kg
+    // 1RM = 100 × (1 + 8/30) = 100 × 1.267 = 126.67kg
+    const results = assessMetrics([
+      { exerciseId: 'bench_press', weightKg: 100, reps: 10 },
+      { exerciseId: 'dips', weightKg: 20, reps: 8 },
+    ], 80); // bodyWeightKg = 80
+
+    expect(results).toHaveLength(1);
+    const result = results[0]!;
+    expect(result.exercise).toBe('dips');
+    expect(result.current1RM).toBe(126.67); // 100kg total × (1 + 8/30)
+  });
+
+  it('usa solo lastre si no hay bodyWeight para ejercicios de autocarga', () => {
+    // Sin bodyWeight, usa solo el lastre (comportamiento fallback)
+    const results = assessMetrics([
+      { exerciseId: 'bench_press', weightKg: 100, reps: 10 },
+      { exerciseId: 'weighted_pull_up', weightKg: 25, reps: 5 },
+    ]); // sin bodyWeightKg
+
+    expect(results).toHaveLength(1);
+    const result = results[0]!;
+    expect(result.exercise).toBe('weighted_pull_up');
+    expect(result.current1RM).toBe(29.17); // solo 25kg × (1 + 5/30)
+  });
+
+  it('no aplica autocarga a ejercicios que no son de autocarga', () => {
+    // Bench press no usa autocarga, solo el peso de la barra
+    const results = assessMetrics([
+      { exerciseId: 'bench_press', weightKg: 100, reps: 10 },
+      { exerciseId: 'overhead_press', weightKg: 50, reps: 8 },
+    ], 75); // bodyWeightKg = 75 (no debería afectar overhead_press)
+
+    expect(results).toHaveLength(1);
+    const result = results[0]!;
+    expect(result.exercise).toBe('overhead_press');
+    expect(result.current1RM).toBe(63.33); // 50kg × (1 + 8/30), NO incluye bodyWeight
+  });
 });
