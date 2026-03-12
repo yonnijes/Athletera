@@ -13,6 +13,10 @@ Athletera identifica **desequilibrios musculares** comparando tu rendimiento en 
 - ⚖️ Compara contra ratios ideales (Bench = 100%)
 - 🎯 Detecta deficiencias y genera recomendaciones
 - 💾 Persiste datos en LocalStorage
+- 🎚️ **Modo Simple:** Ve tu nivel actual (Principiante/Intermedio/Avanzado/Élite)
+- 🎯 **Modo Comparativo:** Compara tu rendimiento vs. tu meta (Ghost Profile)
+- 🚨 **Diagnóstico Narrativo:** Alertas de salud en lenguaje natural
+- ⚠️ **Detección de Desequilibrio Escapular:** Alerta crítica si tracción es 20% menor que empuje
 
 ## Stack
 
@@ -55,12 +59,29 @@ pnpm preview  # Preview build
 
 ## Estado del MVP
 
+### Funcionalidades Core
 - ✅ Core de cálculo (1RM Epley, ratios, diagnóstico)
 - ✅ UI mobile-first con validaciones en tiempo real
 - ✅ Gráfico de radar comparativo
 - ✅ Persistencia LocalStorage
 - ✅ Selector de perfil de atleta
 - ✅ Documentación completa
+
+### Funcionalidades Avanzadas (v0.2.0)
+- ✅ **Matriz de Estándares por Nivel** (Beginner/Intermediate/Advanced/Elite)
+- ✅ **Fuerza Relativa** (1RM / peso corporal)
+- ✅ **Modo Simple:** Badges de nivel + barras de progreso
+- ✅ **Modo Comparativo:** Ghost Profile en radar (tu actual vs. tu meta)
+- ✅ **Diagnóstico Narrativo:** Tarjetas con riesgos y acciones recomendadas
+- ✅ **Alertas Cross-Ejercicio:** Desequilibrio push/pull (≥2 niveles = crítico)
+- ✅ **Detección de Desequilibrio Escapular:** Alerta si tracción ≤ -20% vs empuje
+- ✅ **9 Ejercicios:** 6 principales + 3 accesorios (Dips, Tríceps, Face Pull)
+- ✅ **Test de Resistencia:** Face Pull evalúa 15 reps con 10% del bench
+
+### En Progreso
+- 🔄 Exportar resultados a PDF
+- 🔄 CI/CD con GitHub Actions
+- 🔄 Ratios por categoría deportiva (powerlifting/fútbol/running)
 
 ## Licencia
 
