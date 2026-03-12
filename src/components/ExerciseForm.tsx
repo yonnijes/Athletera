@@ -61,11 +61,6 @@ export function ExerciseForm({ metrics, availableExercises, onChange, onAdd, onR
                 <div>
                   <label htmlFor={weightId} className="text-xs text-slate-600">
                     {isBodyweightExercise(metric.exerciseId) ? 'Lastre (kg)' : 'Peso (kg)'}
-                    {isBodyweightExercise(metric.exerciseId) && (
-                      <span className="block text-[10px] text-amber-600 mt-0.5">
-                        💡 Se suma tu peso corporal automáticamente
-                      </span>
-                    )}
                   </label>
                   <input
                     id={weightId}
@@ -80,6 +75,11 @@ export function ExerciseForm({ metrics, availableExercises, onChange, onAdd, onR
                     aria-invalid={invalidWeight}
                     aria-describedby={invalidWeight ? `${weightId}-error` : undefined}
                   />
+                  {isBodyweightExercise(metric.exerciseId) && (
+                    <span className="block text-[10px] text-amber-600 mt-1">
+                      💡 Se suma tu peso corporal automáticamente
+                    </span>
+                  )}
                   {invalidWeight && (
                     <span id={`${weightId}-error`} className="text-red-600 text-xs" role="alert">
                       Debe ser &gt; 0
