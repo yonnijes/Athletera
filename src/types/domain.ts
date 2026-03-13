@@ -22,8 +22,11 @@ export type ExerciseId =
   | 'overhead_press'
   | 'barbell_row'
   | 'weighted_pull_up'
+  | 'lat_pulldown'
+  | 'bicep_curl'
   | 'squat'
   | 'deadlift'
+  | 'lunges'
   | 'dips'
   | 'tricep_extension'
   | 'face_pull';

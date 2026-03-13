@@ -13,8 +13,10 @@ const IMPLEMENT_EXERCISES: ExerciseId[] = [
   'bench_press',
   'overhead_press',
   'barbell_row',
+  'bicep_curl',
   'squat',
   'deadlift',
+  'lunges',
   'tricep_extension',
 ];
 

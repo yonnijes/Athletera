@@ -47,6 +47,26 @@ export const STRENGTH_STANDARDS: Record<ExerciseId, ExerciseStandard> = {
     function: 'Tracción Vertical',
     movementPattern: 'pull_vertical',
   },
+  lat_pulldown: {
+    standard: {
+      novice: 0.7,
+      intermediate: 0.9,
+      advanced: 1.1,
+      elite: 1.3,
+    },
+    function: 'Tracción Vertical (Máquina)',
+    movementPattern: 'pull_vertical',
+  },
+  bicep_curl: {
+    standard: {
+      novice: 0.2,
+      intermediate: 0.3,
+      advanced: 0.4,
+      elite: 0.5,
+    },
+    function: 'Aislamiento de Bíceps',
+    movementPattern: 'pull_vertical',
+  },
   squat: {
     standard: {
       novice: 0.8,    // 1.0 x BW (pero usamos ratio vs bench)
@@ -66,6 +86,16 @@ export const STRENGTH_STANDARDS: Record<ExerciseId, ExerciseStandard> = {
     },
     function: 'Cadena Posterior',
     movementPattern: 'hinge',
+  },
+  lunges: {
+    standard: {
+      novice: 0.6,
+      intermediate: 0.9,
+      advanced: 1.2,
+      elite: 1.4,
+    },
+    function: 'Pierna Unilateral (Movilidad/Cadera)',
+    movementPattern: 'squat',
   },
   dips: {
     standard: {
@@ -103,7 +133,13 @@ export const STRENGTH_STANDARDS: Record<ExerciseId, ExerciseStandard> = {
  * Mapeo de ejercicios a patrones de movimiento para análisis cross-ejercicio
  */
 export const PUSH_EXERCISES: ExerciseId[] = ['bench_press', 'overhead_press', 'dips', 'tricep_extension'];
-export const PULL_EXERCISES: ExerciseId[] = ['barbell_row', 'weighted_pull_up', 'face_pull'];
+export const PULL_EXERCISES: ExerciseId[] = [
+  'barbell_row',
+  'weighted_pull_up',
+  'lat_pulldown',
+  'bicep_curl',
+  'face_pull',
+];
 
 /**
  * Ejercicios que NO usan 1RM estándar (ej: face_pull usa test de resistencia)

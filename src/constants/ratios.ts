@@ -40,6 +40,16 @@ export const BW_STANDARDS: Record<ExerciseId, LevelStandard> = {
     intermediate: 1.0, // +25% BW
     advanced: 1.2,   // +50% BW
   },
+  lat_pulldown: {
+    beginner: 0.7,   // jalón al pecho (máquina) vs BW
+    intermediate: 0.9,
+    advanced: 1.1,
+  },
+  bicep_curl: {
+    beginner: 0.2,   // curl aislado
+    intermediate: 0.3,
+    advanced: 0.4,
+  },
   squat: {
     beginner: 0.8,   // 1.0× BW (ajustado)
     intermediate: 1.2, // 1.5× BW
@@ -49,6 +59,11 @@ export const BW_STANDARDS: Record<ExerciseId, LevelStandard> = {
     beginner: 0.96,  // 1.2× BW
     intermediate: 1.44, // 1.8× BW
     advanced: 2.0,   // 2.5× BW
+  },
+  lunges: {
+    beginner: 0.6,   // zancadas (unilateral)
+    intermediate: 0.9,
+    advanced: 1.2,
   },
   dips: {
     beginner: 0.88,  // 110% de bench beginner
@@ -80,8 +95,11 @@ export const IDEAL_RATIO_RANGES: Partial<Record<ExerciseId, RatioRange>> = {
   overhead_press: { min: 0.6, max: 0.65 },
   barbell_row: { min: 0.75, max: 0.8 },
   weighted_pull_up: { min: 0.75, max: 0.8 },
+  lat_pulldown: { min: 0.7, max: 0.8 },
+  bicep_curl: { min: 0.22, max: 0.3 },
   squat: { min: 1.2, max: 1.4 },
   deadlift: { min: 1.5, max: 1.8 },
+  lunges: { min: 0.6, max: 0.8 },
   dips: { min: 1.1, max: 1.2 },
   tricep_extension: { min: 0.18, max: 0.22 },
   face_pull: { min: 0.08, max: 0.12 },
@@ -95,8 +113,11 @@ export const EXERCISE_LABELS: Record<ExerciseId, string> = {
   overhead_press: 'Press Militar',
   barbell_row: 'Remo con Barra',
   weighted_pull_up: 'Dominadas Lastradas',
+  lat_pulldown: 'Lat Pulldown (Jalón al Pecho)',
+  bicep_curl: 'Curl de Bíceps',
   squat: 'Sentadilla',
   deadlift: 'Peso Muerto',
+  lunges: 'Zancadas / Estocadas',
   dips: 'Dips (Fondos en Paralelas)',
   tricep_extension: 'Press Francés / Tríceps',
   face_pull: 'Face Pull (Resistencia)',
