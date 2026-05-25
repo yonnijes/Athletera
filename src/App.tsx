@@ -1,3 +1,4 @@
+import { UpdateToast } from './components/UpdateToast';
 import { AthleteProfileForm } from './components/AthleteProfileForm';
 import { ExerciseForm } from './components/ExerciseForm';
 import { RadarChart } from './components/RadarChart';
@@ -111,6 +112,7 @@ export default function App() {
         </h2>
         <ResultsSummary results={results} bodyWeightKg={profile.bodyWeightKg} />
       </section>
+      <UpdateToast />
     </main>
   );
 }
