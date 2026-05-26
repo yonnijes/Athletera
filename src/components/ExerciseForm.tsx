@@ -40,14 +40,15 @@ interface ExerciseFormProps {
   onChange: (exerciseId: ExerciseId, field: 'weightKg' | 'reps' | 'implement', value: number | string) => void;
   onAdd: (exerciseId: ExerciseId) => void;
   onRemove: (exerciseId: ExerciseId) => void;
+  pivot1RM: number | null;
 }
 
-export function ExerciseForm({ metrics, availableExercises, onChange, onAdd, onRemove }: ExerciseFormProps) {
+export function ExerciseForm({ metrics, availableExercises, onChange, onAdd, onRemove, pivot1RM }: ExerciseFormProps) {
   return (
     <section className="space-y-3 rounded-xl border p-4 bg-white" aria-labelledby="exercise-form-title">
       <h2 id="exercise-form-title" className="font-semibold">Métricas de ejercicios</h2>
       <p className="text-xs text-slate-500">
-        El Press de Banca es obligatorio como referencia. Agrega al menos un ejercicio más.
+        Ingresa peso y repeticiones de una serie reciente. Se calcula tu 1RM estimado automáticamente.
       </p>
 
       <div className="space-y-4" role="list">
@@ -63,9 +64,19 @@ export function ExerciseForm({ metrics, availableExercises, onChange, onAdd, onR
                 <label htmlFor={weightId} className="text-sm font-semibold">
                   {formatExercise(metric.exerciseId)}
                   {metric.exerciseId === 'bench_press' && (
-                    <span className="ml-2 text-xs text-sky-600 font-normal">(Obligatorio)</span>
+                    <span className="ml-2 text-xs text-sky-600 font-normal">(Referencia)</span>
                   )}
                 </label>
+                {metric.exerciseId === 'bench_press' && (
+                  <span className="text-[11px] text-slate-500 block mt-0.5 mb-1">
+                    Todos los ratios se calculan a partir de tu marca aquí.
+                    {pivot1RM && pivot1RM > 0 && (
+                      <span className="block text-sky-600 font-medium mt-0.5">
+                        1RM estimado: {pivot1RM} kg
+                      </span>
+                    )}
+                  </span>
+                )}
                 {metric.exerciseId !== 'bench_press' && (
                   <button
                     type="button"

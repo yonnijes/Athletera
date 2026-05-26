@@ -1,4 +1,6 @@
 import { UpdateToast } from './components/UpdateToast';
+import { ProgressStepper } from './components/ProgressStepper';
+import { HowToInterpret } from './components/HowToInterpret';
 import { AthleteProfileForm } from './components/AthleteProfileForm';
 import { ExerciseForm } from './components/ExerciseForm';
 import { RadarChart } from './components/RadarChart';
@@ -32,25 +34,31 @@ export default function App() {
     removeMetric,
     setViewMode,
     setTargetLevel,
+    resetAll,
   } = useStrengthLogic();
 
   const availableExercises = EXERCISES.filter((e) => !metrics.some((m) => m.exerciseId === e.id));
 
+  const handleReset = () => {
+    if (window.confirm('¿Estás seguro? Se borrarán todos tus datos.')) {
+      resetAll();
+    }
+  };
+
   return (
     <main className="app-container mx-auto max-w-md p-4 space-y-4 bg-slate-50 min-h-screen" role="main">
-      <header className="space-y-1 pt-8">
-        <h1 className="text-2xl font-bold">Athletera MVP</h1>
-        <p className="text-sm text-slate-600">Evaluador de balance muscular basado en 1RM (Epley).</p>
-        <p className="text-xs text-slate-500">Pivot obligatorio: Press de Banca.</p>
-        {pivot1RM && (
-          <p className="text-sm" aria-live="polite">
-            1RM Pivot: <strong>{pivot1RM} kg</strong>
-          </p>
-        )}
+      <header className="space-y-2 pt-8">
+        <h1 className="text-2xl font-bold">Athletera</h1>
+        <p className="text-sm text-slate-700">
+          Detecta desequilibrios musculares que pueden causar lesiones.
+        </p>
+        <p className="text-xs text-slate-500">
+          Ingresa tus marcas en ejercicios clave y obtén un diagnóstico personalizado.
+          Solo necesitas tu peso corporal y los kg/repeticiones de tus levantamientos.
+        </p>
       </header>
 
-      {/* Tarjeta de Diagnóstico Narrativo (PRIORITARIA) */}
-      {diagnosticCard && <DiagnosticCard diagnostic={diagnosticCard} />}
+      <ProgressStepper profile={profile} metrics={metrics} />
 
       {/* Selector de Modo (Simple/Comparativo) */}
       <ViewModeToggle
@@ -69,6 +77,7 @@ export default function App() {
         onChange={updateMetric}
         onAdd={addMetric}
         onRemove={removeMetric}
+        pivot1RM={pivot1RM}
       />
 
       {errors.length > 0 && (
@@ -112,6 +121,21 @@ export default function App() {
         </h2>
         <ResultsSummary results={results} bodyWeightKg={profile.bodyWeightKg} />
       </section>
+
+      {/* Tarjeta de Diagnóstico Narrativo */}
+      {diagnosticCard && <DiagnosticCard diagnostic={diagnosticCard} />}
+
+      <HowToInterpret />
+
+      <div className="pt-2 pb-8">
+        <button
+          type="button"
+          onClick={handleReset}
+          className="w-full rounded-lg border border-red-300 text-red-600 text-sm py-2.5 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 transition-colors"
+        >
+          Reiniciar todo
+        </button>
+      </div>
       <UpdateToast />
     </main>
   );

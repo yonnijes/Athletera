@@ -11,7 +11,7 @@ export function AthleteProfileForm({ profile, onChange }: AthleteProfileFormProp
     <section className="rounded-xl border p-4 bg-white space-y-3" aria-labelledby="profile-form-title">
       <h2 id="profile-form-title" className="font-semibold">Perfil de atleta</h2>
       <p className="text-xs text-slate-500">
-        Esta información se usará en futuras versiones para ajustar los ratios.
+        Tu peso corporal es necesario para calcular tu nivel de fuerza relativa y detectar desequilibrios.
       </p>
 
       <div className="grid grid-cols-1 gap-3">
@@ -25,8 +25,8 @@ export function AthleteProfileForm({ profile, onChange }: AthleteProfileFormProp
             aria-describedby="category-help"
           >
             {ATHLETE_CATEGORIES.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.label}
+              <option key={c.id} value={c.id} disabled={!c.enabled}>
+                {c.label}{!c.enabled ? ' (Próximamente)' : ''}
               </option>
             ))}
           </select>

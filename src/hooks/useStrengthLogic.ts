@@ -8,6 +8,7 @@ import type {
   AnyLevel,
 } from '../types/domain';
 import { PIVOT_EXERCISE } from '../constants/ratios';
+import { ATHLETE_CATEGORIES } from '../constants/athlete';
 import {
   assessMetrics,
   estimate1RM,
@@ -64,6 +65,7 @@ export interface UseStrengthLogicResult {
   updateMetric: (exerciseId: ExerciseId, field: 'weightKg' | 'reps' | 'implement', value: number | string) => void;
   addMetric: (exerciseId: ExerciseId) => void;
   removeMetric: (exerciseId: ExerciseId) => void;
+  resetAll: () => void;
 }
 
 const STORAGE_KEY = 'athletera:strength-state:v2';
@@ -83,6 +85,10 @@ const DEFAULT_PROFILE: AthleteProfile = {
 const DEFAULT_METRICS: StrengthMetrics[] = [
   { exerciseId: 'bench_press', weightKg: 80, reps: 8, implement: 'barbell' },
   { exerciseId: 'overhead_press', weightKg: 45, reps: 6, implement: 'barbell' },
+];
+
+const EMPTY_METRICS: StrengthMetrics[] = [
+  { exerciseId: 'bench_press', weightKg: 0, reps: 0, implement: 'barbell' },
 ];
 
 const isStrengthMetric = (value: unknown): value is StrengthMetrics => {
@@ -119,7 +125,9 @@ const loadStoredState = (): PersistedState => {
 
     return {
       profile: {
-        category: profile.category ?? DEFAULT_PROFILE.category,
+        category: (ATHLETE_CATEGORIES.find((c) => c.id === profile.category)?.enabled ?? false)
+          ? profile.category ?? DEFAULT_PROFILE.category
+          : DEFAULT_PROFILE.category,
         level: profile.level ?? DEFAULT_PROFILE.level,
         bodyWeightKg:
           typeof profile.bodyWeightKg === 'number' && Number.isFinite(profile.bodyWeightKg) && profile.bodyWeightKg > 0
@@ -416,5 +424,12 @@ export function useStrengthLogic(): UseStrengthLogicResult {
     updateMetric,
     addMetric,
     removeMetric,
+    resetAll: () => {
+      window.localStorage.removeItem(STORAGE_KEY);
+      setProfile(DEFAULT_PROFILE);
+      setMetrics(EMPTY_METRICS);
+      setViewMode('simple');
+      setTargetLevel('intermediate');
+    },
   };
 }

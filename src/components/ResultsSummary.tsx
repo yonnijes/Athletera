@@ -12,9 +12,13 @@ export function ResultsSummary({ results, bodyWeightKg }: ResultsSummaryProps) {
 
   if (results.length === 0) {
     return (
-      <p className="text-sm text-slate-500" role="status">
-        {bodyWeightKg ? 'Agrega datos válidos para evaluar.' : 'Ingresa tu peso corporal para ver el nivel de fuerza.'}
-      </p>
+      <div className="text-sm text-slate-500 space-y-1" role="status">
+        <p>
+          {bodyWeightKg
+            ? 'Completa tu Press de Banca y al menos un ejercicio más para ver el diagnóstico.'
+            : 'Empieza ingresando tu peso corporal arriba. Luego agrega tu marca en Press de Banca (kg y repeticiones) y otros ejercicios para obtener un diagnóstico completo.'}
+        </p>
+      </div>
     );
   }
 
